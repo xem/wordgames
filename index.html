@@ -14,7 +14,7 @@ day.innerHTML = new Date().toISOString().slice(0,10);
 
 // Days since 01-01-1970
 const days = Math.floor(Date.UTC(new Date().getUTCFullYear(),new Date().getUTCMonth(),new Date().getUTCDate())/86400000);
-console.log(days);
+//console.log(days);
 
 const isSubset = (a, b) => {
   for(var i = 0; i < a.length; i++){
@@ -62,7 +62,7 @@ subcheckboggle = (word, index, grid) => {
 words = [];
 lang = (dico, langId) => {
   words = dico;
-  console.log(words);
+  //console.log(words);
   if(langId == 0){
     page.innerHTML = `<p>Game: <button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>SPELLING BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIWORD</button>
     <p><div id=board></div>`;
@@ -74,9 +74,9 @@ lang = (dico, langId) => {
   
   wordle.onclick = () => game(0);
   motigma.onclick = () => game(1);
-  spellingbee.onclick = () => game(1); 
-  boggle.onclick = () => game(2); 
-  maxiword.onclick = () => game(3);
+  spellingbee.onclick = () => game(2); 
+  boggle.onclick = () => game(3); 
+  maxiword.onclick = () => game(4);
 }
 
 en.onclick = () => lang(EN, 0);
@@ -97,11 +97,11 @@ game = game => {
     
     // 5-letter words with no repeated letters
     wordlewords = words.filter(w => w.length === 5 && new Set(w).size === 5);
-    console.log(wordlewords);
+    //console.log(wordlewords);
     
     // Word of the day
     wordleword = wordlewords[(days * 99) % wordlewords.length];
-    console.log(wordleword);
+    //console.log(wordleword);
     
     // word
     word.onkeyup = word.oninput = (key) => {
@@ -174,11 +174,11 @@ game = game => {
     
     // 5-letter words with no repeated letters
     motigmawords = words.filter(w => w.length === 5 && new Set(w).size === 5);
-    console.log(motigmawords);
+    //console.log(motigmawords);
     
     // Word of the day
     motigmaword = motigmawords[(days * 9999) % motigmawords.length];
-    console.log(motigmaword);
+    //console.log(motigmaword);
     
     // word
     word.onkeyup = word.oninput = (key) => {
@@ -231,11 +231,11 @@ game = game => {
     
     // 5-letter words
     beewords = words.filter(w => w.length === 5 && new Set(w).size === 5);
-    console.log(beewords);
+    //console.log(beewords);
     
     // Word of the day
     beeword = beewords[(days * 999) % beewords.length];
-    console.log(beeword);
+    //console.log(beeword);
       
     board.innerHTML = "<h2><span style=color:red>" + beeword[0] + " </span>" + [...beeword.slice(1)].sort().join(" ") + "</h2><p><input id=word> <button id=ok>OK</button><p><div id=result></div><p id=total>";
     
@@ -254,7 +254,7 @@ game = game => {
           if(win == 1) solutions.push(words[i]);
         }
       }
-      console.log(solutions);
+      //console.log(solutions);
       total.innerHTML = "score: <span id=score>0</span> / " + solutions.length;
     }, 100);
     
@@ -421,7 +421,7 @@ game = game => {
     for(i = 0; i < 49; i++){
       todayletters.push(letters[(days * 99 * i) % letters.length]);
       letters = letters.replace(todayletters[todayletters.length-1],'');
-      console.log(letters, todayletters);
+      //console.log(letters, todayletters);
     }
     
     // strings (rows/cols) of the day
@@ -442,7 +442,7 @@ game = game => {
         todaystrings[i+7] += todayletters[j*7+i];
       }
     }
-    console.log(todaystrings);
+    //console.log(todaystrings);
     
     // board
     inputs = 0;
@@ -464,7 +464,7 @@ game = game => {
         todaybestscore += todaybest[i].length;
       }
       
-      console.log(todaybest, todaybestscore);
+      //console.log(todaybest, todaybestscore);
       
       // result
       result.innerHTML = "Score: <span id=score>0</span> / " + todaybestscore;
@@ -472,7 +472,7 @@ game = game => {
     }, 100);
     
     oninput = onkeyup = (e) => {
-      console.log(e);
+      //console.log(e);
       e.srcElement.value = e.srcElement.value.toUpperCase().trim();
       if(e.key == "Enter"){
         ok.click();
