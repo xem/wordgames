@@ -1,0 +1,501 @@
+﻿<!doctype html>
+<script src=EN.js></script>
+<script src=FR.js></script>
+<body style=font-family:monospace>
+<h1>Word Games</h1>
+<p>Today: <span id=day></span>
+<div id=page>
+<p>Language: <button id=en>ENGLISH</button> <button id=fr>FRENCH</button>
+</div>
+
+<script>
+// Current day
+day.innerHTML = new Date().toISOString().slice(0,10);
+
+// Days since 01-01-1970
+const days = Math.floor(Date.UTC(new Date().getUTCFullYear(),new Date().getUTCMonth(),new Date().getUTCDate())/86400000);
+console.log(days);
+
+const isSubset = (a, b) => {
+  for(var i = 0; i < a.length; i++){
+    if(!b.includes(a[i])) return false;
+  }
+  return [...a].every(c =>
+    (b.match(new RegExp(c, "g")) || []).length >=
+    (a.match(new RegExp(c, "g")) || []).length
+  );
+}
+  
+checkboggle = (word) => {
+  if(word.length < 3) return false;
+  for(var i = 0; i < 16; i++){
+    if(todayletters[i] == word[0]){
+      tmp = todayletters.slice(); // copy grid
+      tmp[i] = "?"; // remove current letter
+      if(subcheckboggle(word.slice(1), i, tmp)){
+        return true
+      }
+    }
+  }
+  return false;
+}
+
+subcheckboggle = (word, index, grid) => {
+  
+  if(word.length == 0) return true;
+  
+  link = links[index];
+  //console.log(word, index, grid, link);
+  for(var i = 0; i < link.length; i++){
+    if(link[i][1] == word[0] && grid[link[i][0]] != "?"){
+      tmp = grid.slice(); // copy grid
+      tmp[link[i][0]] = "?"; // remove current letter
+      if(subcheckboggle(word.slice(1), link[i][0], tmp)){
+        return true
+      }
+    }
+  }
+  return false;
+}
+
+// Choose language
+words = [];
+lang = (dico, langId) => {
+  words = dico;
+  console.log(words);
+  if(langId == 0){
+    page.innerHTML = `<p>Game: <button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>SPELLING BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIWORD</button>
+    <p><div id=board></div>`;
+  }
+  else {
+    page.innerHTML = `<p>Jeu: <button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>LA BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIMOT</button>
+    <p><div id=board></div>`;
+  }
+  
+  wordle.onclick = () => game(0);
+  motigma.onclick = () => game(1);
+  spellingbee.onclick = () => game(1); 
+  boggle.onclick = () => game(2); 
+  maxiword.onclick = () => game(3);
+}
+
+en.onclick = () => lang(EN, 0);
+fr.onclick = () => lang(FR, 1);
+
+// Choose game
+game = game => {
+  board.innerHTML = game;
+  
+  // Wordle
+  if(game == 0){
+  
+    tries = 0;
+    
+    board.innerHTML = "<p><input id=word> <button id=ok>OK</button><p><div id=result></div>";
+    
+    word.focus();
+    
+    // 5-letter words with no repeated letters
+    wordlewords = words.filter(w => w.length === 5 && new Set(w).size === 5);
+    console.log(wordlewords);
+    
+    // Word of the day
+    wordleword = wordlewords[(days * 99) % wordlewords.length];
+    console.log(wordleword);
+    
+    // word
+    word.onkeyup = word.oninput = (key) => {
+      word.value = word.value.toUpperCase();
+      if(key.key == "Enter"){
+        ok.click();
+      }
+    }
+    
+    // OK
+    ok.onclick = () => {
+      if(word.value.length == 5){
+      
+        // Non existing word
+        if(!words.includes(word.value)){
+          return;
+        }
+        
+        // Score
+        wordlescore = "";
+        for(i = 0; i < 5; i++){
+        
+          // green
+          if(word.value[i] == wordleword[i]){
+            wordlescore += "🟩";
+          }
+          
+          // orange
+          else if(wordleword.includes(word.value[i])){
+            wordlescore += "🟧";
+          }
+          
+          // black
+          else {
+            wordlescore += "⬛";
+          }
+        }
+
+        // score
+        result.innerHTML += "<p>" + wordlescore + " " + word.value;  
+        
+        // Win 
+        if(word.value == wordleword){
+          word.value = "Congrats!";
+          word.disabled = true;
+        }
+        
+        // lose
+        else if(tries == 6){
+          word.value = "Lost!";
+          word.disabled = true;
+          result.innerHTML += "Answer: " + wordleword;
+        }
+        
+        else {
+          word.value = "";
+          tries++;
+        }
+      }
+    }
+  } // end wordle
+  
+  // Motigma
+  else if(game == 1){
+    tries = 0;
+    
+    board.innerHTML = "<p><input id=word> <button id=ok>OK</button> (5 letters)<p><div id=result></div>";
+    
+    word.focus();
+    
+    // 5-letter words with no repeated letters
+    motigmawords = words.filter(w => w.length === 5 && new Set(w).size === 5);
+    console.log(motigmawords);
+    
+    // Word of the day
+    motigmaword = motigmawords[(days * 9999) % motigmawords.length];
+    console.log(motigmaword);
+    
+    // word
+    word.onkeyup = word.oninput = (key) => {
+      word.value = word.value.toUpperCase();
+      if(key.key == "Enter"){
+        ok.click();
+      }
+    }
+    
+    // OK
+    ok.onclick = () => {
+      if(word.value.length == 5){
+      
+        // Non existing word
+        if(!words.includes(word.value)){
+          return;
+        }
+        
+        // Score
+        motigmascore = "";
+        motigmapoints = 0;
+        for(i = 0; i < 5; i++){
+          
+          // orange
+          if(motigmaword.includes(word.value[i])){
+            motigmapoints ++;
+          }
+        }
+
+        // score
+        result.innerHTML += "<p>" + word.value + " (" + motigmapoints + ")";  
+        
+        // Win 
+        if(word.value == motigmaword){
+          word.value = "Congrats!";
+          word.disabled = true;
+          result.innerHTML += "<p>Score: " + (tries + 1);
+        }
+        
+        else {
+          word.value = "";
+          tries++;
+        }
+      }
+    }
+  }
+  
+  // Spelling bee
+  else if(game == 2){
+    
+    // 5-letter words
+    beewords = words.filter(w => w.length === 5 && new Set(w).size === 5);
+    console.log(beewords);
+    
+    // Word of the day
+    beeword = beewords[(days * 999) % beewords.length];
+    console.log(beeword);
+      
+    board.innerHTML = "<h2><span style=color:red>" + beeword[0] + " </span>" + [...beeword.slice(1)].sort().join(" ") + "</h2><p><input id=word> <button id=ok>OK</button><p><div id=result></div><p id=total>";
+    
+    setTimeout(()=>{
+      
+      // solutions of the day
+      solutions = [];
+      for(i = 0; i < words.length; i++){
+        win = 1;
+        if(words[i].length > 2 && words[i].includes(beeword[0])){
+          for(j = 0; j < words[i].length; j++){
+            if(!beeword.includes(words[i][j])){
+              win = 0;
+            }
+          }
+          if(win == 1) solutions.push(words[i]);
+        }
+      }
+      console.log(solutions);
+      total.innerHTML = "score: <span id=score>0</span> / " + solutions.length;
+    }, 100);
+    
+    word.focus();
+    
+    // word
+    word.onkeyup = word.oninput = (key) => {
+      word.value = word.value.toUpperCase();
+      if(key.key == "Enter"){
+        ok.click();
+      }
+    }
+    
+    // OK
+    wordsfound = [];
+    
+    ok.onclick = () => {
+      if(solutions.includes(word.value) && !wordsfound.includes(word.value)){
+        
+        // score
+        result.innerHTML += "<p>" + word.value;
+        wordsfound.push(word.value);
+        score.innerHTML = wordsfound.length;
+      }
+      word.value = "";
+      if(wordsfound.length == solutions.length){
+        word.value = "Congrats!";
+        word.disabled = true;
+      }
+    } 
+  }
+
+  // Boggle
+  else if(game == 3){
+  
+    // all letters
+    letters = "AAEEGNAOOTTWCIMOTUDISTTYEIOSSTDELRVYEHRTVWACHOPSHIMNUQEEINSUAFFKPSHLNNRZEEGHNWDEILRXELRTTYABBJOO";
+    
+    // letters of the day
+    todayletters = [];
+    for(i = 0; i < 16; i++){
+      todayletters.push(letters[(days * i) % letters.length]);
+      letters = letters.replace(todayletters[todayletters.length-1],'');
+      //console.log(letters, todayletters);
+    }
+    
+    board.innerHTML = "<h2>" + todayletters.join(" ").replace(/(. . . .)/g,"$1<br>")+"</h2><p><input id=word> <button id=ok>OK</button><p><div id=result></div><p id=score>";
+    
+    word.focus();
+    
+    // words of the day
+    todaywords = [
+      // 16 sub-arrays for each starting letter
+    ];
+    
+    links = [];
+    
+    for(i = 0; i < 16; i++){
+      links[i] = [];
+      
+      // top left
+      if((i / 4) >= 1 && (i % 4) >= 1){
+        links[i].push([i-5, todayletters[i-5]]);
+      }
+      
+      // top
+      if((i / 4) >= 1){
+        links[i].push([i-4, todayletters[i-4]]);
+      }
+      
+      // top right
+      if((i / 4) >= 1 && (i % 4) < 3){
+        links[i].push([i-3, todayletters[i-3]]);
+      }
+      
+      // left
+      if((i % 4) >= 1){
+        links[i].push([i-1, todayletters[i-1]]);
+      }
+      
+      // right
+      if((i % 4) < 3){
+        links[i].push([i+1, todayletters[i+1]]);
+      }
+      
+      // bottom left
+      if((i / 4) < 3 && (i % 4) >= 1){
+        links[i].push([i+3, todayletters[i+3]]);
+      }
+      
+      // bottom
+      if((i / 4) < 3){
+        links[i].push([i+4, todayletters[i+4]]);
+      }
+      
+      // bottom right
+      if((i / 4) < 3 && (i % 4) < 3){
+        links[i].push([i+5, todayletters[i+5]]);
+      }
+      
+      
+    }
+    
+    //console.log(links);
+    
+    // check if words are in the grid
+    //console.log("RA", checkboggle("RA"));
+    //console.log("PLANTER", checkboggle("PLANTERA"));
+    //console.log("HERBAL", checkboggle("HERBAL"));
+    //console.log("BANANA", checkboggle("BANANA"));
+    
+    bogglewords = [];
+    test = 0;
+    interval = setInterval(()=>{
+      for(i = test; i < test+10000; i++){
+        if(i > words.length){
+          clearInterval(interval);
+          score.innerHTML = "Score: <span id=bogglescore>0</span> / " + bogglewords.length;
+        }
+        if(words[i] && checkboggle(words[i])){
+          bogglewords.push(words[i]);
+        }
+      }
+      test = i;
+      //console.log(bogglewords.length);
+    },16);
+    
+    // word
+    word.onkeyup = word.oninput = (key) => {
+      word.value = word.value.toUpperCase();
+      if(key.key == "Enter"){
+        ok.click();
+      }
+    }
+    
+    // OK
+    wordsfound = [];
+    
+    ok.onclick = () => {
+      if(bogglewords.includes(word.value) && !wordsfound.includes(word.value)){
+        
+        // score
+        result.innerHTML += "<p>" + word.value;
+        wordsfound.push(word.value);
+        bogglescore.innerHTML = wordsfound.length;
+      }
+      word.value = "";
+      if(wordsfound.length == bogglewords.length){
+        word.value = "Congrats!";
+        word.disabled = true;
+      }
+    } 
+    
+  }
+
+  // Maxiword
+  else if(game == 4){
+    
+    // all letters
+    letters = "AAEEGNAOOTTWCIMOTUDISTTYEIOSSTDELRVYEHRTVWACHOPSHIMNUQEEINSUAFFKPSHLNNRZEEGHNWDEILRXELRTTYABBJOO";
+    
+    // letters of the day 
+    todayletters = [];
+    for(i = 0; i < 49; i++){
+      todayletters.push(letters[(days * 99 * i) % letters.length]);
+      letters = letters.replace(todayletters[todayletters.length-1],'');
+      console.log(letters, todayletters);
+    }
+    
+    // strings (rows/cols) of the day
+    todaystrings = [];
+    
+    // rows
+    for(i = 0; i < 7; i++){
+      todaystrings[i] = "";
+      for(j = 0; j < 7; j++){
+        todaystrings[i] += todayletters[i*7+j];
+      }
+    }
+    
+    // cols
+    for(i = 0; i < 7; i++){
+      todaystrings[i+7] = "";
+      for(j = 0; j < 7; j++){
+        todaystrings[i+7] += todayletters[j*7+i];
+      }
+    }
+    console.log(todaystrings);
+    
+    // board
+    inputs = 0;
+    board.innerHTML = "<h2>" + todayletters.join(" ").replace(/(. . . . . . .)/g,(a)=>{return a + " <input id=word" + (inputs++) + "><br>"})+"</h2><p>" + ".......".replace(/./g,()=>{ return "<textarea id=word" + (inputs++) + " rows=7 cols=1 maxlength=7 style='display:inline;resize:none;width:12px;margin:0 4px 0 0;'></textarea>" }) + "<p><button id=ok>OK</button><p><div id=result></div>";
+    
+    setTimeout(()=>{
+    
+      // best scores of the day
+      todaybestscore = 0;
+      todaybest = ["","","","","","","","","","","","","",""];
+      for(i = 0; i < 14; i++){
+        for(j = 0; j < words.length; j++){
+          if(words[j].length >= todaybest[i].length){
+            if(isSubset(words[j], todaystrings[i])){
+              todaybest[i] = words[j];
+            }
+          }
+        }
+        todaybestscore += todaybest[i].length;
+      }
+      
+      console.log(todaybest, todaybestscore);
+      
+      // result
+      result.innerHTML = "Score: <span id=score>0</span> / " + todaybestscore;
+      
+    }, 100);
+    
+    oninput = onkeyup = (e) => {
+      console.log(e);
+      e.srcElement.value = e.srcElement.value.toUpperCase().trim();
+      if(e.key == "Enter"){
+        ok.click();
+      }
+    }
+    
+    ok.onclick = () => {
+      maxitotal = 0;
+      for(i = 0; i < 14; i++){
+        input = window["word" + i];
+        value = input.value.trim();
+        if(value && isSubset(value, todaystrings[i]) && words.includes(value)){
+          maxitotal += value.length;
+        }
+        else {
+          input.value = "";
+        }
+      }
+      score.innerHTML = maxitotal;
+    }
+  
+  }
+  
+}
+
+</script>
