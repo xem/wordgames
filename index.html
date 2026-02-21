@@ -1,16 +1,95 @@
 ﻿<!doctype html>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <script src=EN.js></script>
 <script src=FR.js></script>
-<body style=font-family:monospace>
-<h1>Word Games</h1>
-<p>Today: <span id=day></span>
-<div id=page>
-<p>Language: <button id=en>ENGLISH</button> <button id=fr>FRENCH</button>
+
+<div id=pagemenu>
+  <h1>Word Games</h1>
+  <div id=menu>
+    <br>
+    <br>
+    <button id=en>ENGLISH</button>
+    <br>
+    <br>
+    <button id=fr>FRANÇAIS</button>
+    <div id=day class=mono></div>
+  </div>
 </div>
 
+<div id=pagewordle class=hidden>
+  <div class=x>×</div>
+  <h1>Wordle</h1>
+  <h2>You have 6 tries to find today's 5-letter word.<br>Green: correct letter. Orange: misplaced letter.</h2>
+  <br>
+  <p>
+  <center>
+    <input id=wordleinput> <button id=wordleok>OK</button></center>
+  <br>
+  <p><div id=wordleresult></div>
+</div>
+
+<div id=pagemotigma class=hidden>
+  <div class=x>×</div>
+  <h1>Motigma</h1>
+  <h2>Try to find today's 5-letter word.<br>The number shows how many letters are correct.<br>This is inspired by the original game <a href="https://adrien-gueret.github.io/motigma/#splashscreen" target=_blank>Motigma</a>.</h2>
+  <br>
+  <p>
+  <center>
+    <input id=motigmainput> <button id=motigmaok>OK</button></center>
+  <br>
+  <p><div id=motigmaresult></div>
+</div>
+
+<div id=pagespellingbee class=hidden>
+  <div class=x>×</div>
+  <h1>Spelling bee</h1>
+  <h2>Find as many words as possible with these letters.<br>The red letter is mandatory.<br>Words must be at least 3 letters long.</h2>
+  <center>
+    <div id=spellingbeeboard></div>
+    <p><input id=spellingbeeinput> <button id=spellingbeeok>OK</button>
+  </center>
+  <p><div id=spellingbeeresult></div>
+  <p><div id=spellingbeetotal></div>
+</div>
+
+<div id=pageboggle class=hidden>
+  <div class=x>×</div>
+  <h1>Boggle</h1>
+  <h2>Find words made from neighbour letters.<br>Each letter can only be used once per word.<br>Words must be at least 3 letters long.</h2>
+  <center>
+    <div id=boggleboard></div>
+    <p><input id=boggleinput> <button id=boggleok>OK</button>
+  </center>
+  <p><div id=boggleresult></div>
+  <p><div id=boggletotal></div>
+</div>
+
+<div id=pagemaxiword class=hidden>
+  <div class=x>×</div>
+  <h1>Maxiword</h1>
+  <h2>Find the longest word in each row and column.<br>Your score is the total length of your words.</h2>
+  <center>
+    <div id=maxiwordboard></div>
+    <p><input id=maxiwordinput> <button id=maxiwordok>OK</button>
+  </center>
+  <p><div id=maxiwordresult></div>
+  <p><div id=maxiwordtotal></div>
+</div>
+
+
 <script>
+
+currentday = new Date().toISOString().slice(0, 10);
+
 // Current day
-day.innerHTML = new Date().toISOString().slice(0,10);
+day.innerHTML = currentday;
+
+// reload page if day changed
+setInterval(()=>{
+  if(new Date().toISOString().slice(0, 10) != currentday){
+    location = location;
+  }
+}, 1000);
 
 // Days since 01-01-1970
 const days = Math.floor(Date.UTC(new Date().getUTCFullYear(),new Date().getUTCMonth(),new Date().getUTCDate())/86400000);
@@ -29,8 +108,8 @@ const isSubset = (a, b) => {
 checkboggle = (word) => {
   if(word.length < 3) return false;
   for(var i = 0; i < 16; i++){
-    if(todayletters[i] == word[0]){
-      tmp = todayletters.slice(); // copy grid
+    if(boggletodayletters[i] == word[0]){
+      tmp = boggletodayletters.slice(); // copy grid
       tmp[i] = "?"; // remove current letter
       if(subcheckboggle(word.slice(1), i, tmp)){
         return true
@@ -41,11 +120,10 @@ checkboggle = (word) => {
 }
 
 subcheckboggle = (word, index, grid) => {
-  
+  //console.log(word, index, grid);
   if(word.length == 0) return true;
-  
-  link = links[index];
-  //console.log(word, index, grid, link);
+  var link = bogglelinks[index];
+  //console.log(link);
   for(var i = 0; i < link.length; i++){
     if(link[i][1] == word[0] && grid[link[i][0]] != "?"){
       tmp = grid.slice(); // copy grid
@@ -62,14 +140,11 @@ subcheckboggle = (word, index, grid) => {
 words = [];
 lang = (dico, langId) => {
   words = dico;
-  //console.log(words);
   if(langId == 0){
-    page.innerHTML = `<p>Game: <button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>SPELLING BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIWORD</button>
-    <p><div id=board></div>`;
+    pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>SPELLING BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIWORD</button>`;
   }
   else {
-    page.innerHTML = `<p>Jeu: <button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>LA BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIMOT</button>
-    <p><div id=board></div>`;
+    pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>LA BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIMOT</button>`;
   }
   
   wordle.onclick = () => game(0);
@@ -77,6 +152,121 @@ lang = (dico, langId) => {
   spellingbee.onclick = () => game(2); 
   boggle.onclick = () => game(3); 
   maxiword.onclick = () => game(4);
+  
+  // Choose words/grids of the day
+  
+  // Wordle
+  
+    // 5-letter words with no repeated letters
+    wordlewords = words.filter(w => w.length === 5 && new Set(w).size === 5);
+        
+    // Word of the day
+    wordleword = wordlewords[(days * 99) % wordlewords.length];
+  
+  // Motigma
+  
+    // 5-letter words with no repeated letters
+    motigmawords = words.filter(w => w.length === 5 && new Set(w).size === 5);
+
+    // Word of the day
+    motigmaword = motigmawords[(days * 9999) % motigmawords.length];
+    
+  // Spelling bee
+  
+    // 5-letter words
+    spellingbeewords = words.filter(w => w.length === 5 && new Set(w).size === 5);
+    
+    // Word of the day
+    spellingbeeword = spellingbeewords[(days * 999) % spellingbeewords.length];
+      
+    spellingbeeboard.innerHTML = "<h3><span style=color:red>" + spellingbeeword[0] + " </span>" + [...spellingbeeword.slice(1)].sort().join(" ") + "</h3>";
+    
+    setTimeout(()=>{
+    
+    // solutions of the day
+    spellingbeesolutions = [];
+    for(i = 0; i < words.length; i++){
+      win = 1;
+      if(words[i].length > 2 && words[i].includes(spellingbeeword[0])){
+        for(j = 0; j < words[i].length; j++){
+          if(!spellingbeeword.includes(words[i][j])){
+            win = 0;
+          }
+        }
+        if(win == 1) spellingbeesolutions.push(words[i]);
+      }
+    }
+    spellingbeetotal.innerHTML = "Score: <span id=spellingbeescore>0</span> / " + spellingbeesolutions.length;
+  }, 100);
+  
+  // Boggle
+  
+    // all letters
+    boggleletters = "AAEEGNAOOTTWCIMOTUDISTTYEIOSSTDELRVYEHRTVWACHOPSHIMNUQEEINSUAFFKPSHLNNRZEEGHNWDEILRXELRTTYABBJOO";
+    
+    // letters of the day
+    boggletodayletters = [];
+    for(i = 0; i < 16; i++){
+      boggletodayletters.push(boggleletters[(days * i) % boggleletters.length]);
+      boggleletters = boggleletters.replace(boggletodayletters[boggletodayletters.length-1],'');
+    }
+    
+    boggleboard.innerHTML =  boggletodayletters.join(" ").replace(/(. . . .)/g,"$1<br>");
+    
+    // words of the day
+    bogglelinks = [];
+    
+    for(i = 0; i < 16; i++){
+      bogglelinks[i] = [];
+      
+      // top left
+      if((i / 4) >= 1 && (i % 4) >= 1){
+        bogglelinks[i].push([i-5, boggletodayletters[i-5]]);
+      }
+      
+      // top
+      if((i / 4) >= 1){
+        bogglelinks[i].push([i-4, boggletodayletters[i-4]]);
+      }
+      
+      // top right
+      if((i / 4) >= 1 && (i % 4) < 3){
+        bogglelinks[i].push([i-3, boggletodayletters[i-3]]);
+      }
+      
+      // left
+      if((i % 4) >= 1){
+        bogglelinks[i].push([i-1, boggletodayletters[i-1]]);
+      }
+      
+      // right
+      if((i % 4) < 3){
+        bogglelinks[i].push([i+1, boggletodayletters[i+1]]);
+      }
+      
+      // bottom left
+      if((i / 4) < 3 && (i % 4) >= 1){
+        bogglelinks[i].push([i+3, boggletodayletters[i+3]]);
+      }
+      
+      // bottom
+      if((i / 4) < 3){
+        bogglelinks[i].push([i+4, boggletodayletters[i+4]]);
+      }
+      
+      // bottom right
+      if((i / 4) < 3 && (i % 4) < 3){
+        bogglelinks[i].push([i+5, boggletodayletters[i+5]]);
+      }
+    }
+    
+    bogglewords = [];
+    for(i = 0; i < words.length; i++){
+      if(words[i] && checkboggle(words[i])){
+        bogglewords.push(words[i]);
+      }
+    }
+    boggletotal.innerHTML = "Score: <span id=bogglescore>0</span> / " + bogglewords.length;
 }
 
 en.onclick = () => lang(EN, 0);
@@ -84,418 +274,349 @@ fr.onclick = () => lang(FR, 1);
 
 // Choose game
 game = game => {
-  board.innerHTML = game;
+  pagemenu.classList.add("hidden");
   
   // Wordle
   if(game == 0){
-  
-    tries = 0;
-    
-    board.innerHTML = "<p><input id=word> <button id=ok>OK</button><p><div id=result></div>";
-    
-    word.focus();
-    
-    // 5-letter words with no repeated letters
-    wordlewords = words.filter(w => w.length === 5 && new Set(w).size === 5);
-    //console.log(wordlewords);
-    
-    // Word of the day
-    wordleword = wordlewords[(days * 99) % wordlewords.length];
-    //console.log(wordleword);
-    
-    // word
-    word.onkeyup = word.oninput = (key) => {
-      word.value = word.value.toUpperCase();
-      if(key.key == "Enter"){
-        ok.click();
-      }
-    }
-    
-    // OK
-    ok.onclick = () => {
-      if(word.value.length == 5){
-      
-        // Non existing word
-        if(!words.includes(word.value)){
-          return;
-        }
-        
-        // Score
-        wordlescore = "";
-        for(i = 0; i < 5; i++){
-        
-          // green
-          if(word.value[i] == wordleword[i]){
-            wordlescore += "🟩";
-          }
-          
-          // orange
-          else if(wordleword.includes(word.value[i])){
-            wordlescore += "🟧";
-          }
-          
-          // black
-          else {
-            wordlescore += "⬛";
-          }
-        }
-
-        // score
-        result.innerHTML += "<p>" + wordlescore + " " + word.value;  
-        
-        // Win 
-        if(word.value == wordleword){
-          word.value = "Congrats!";
-          word.disabled = true;
-        }
-        
-        // lose
-        else if(tries == 6){
-          word.value = "Lost!";
-          word.disabled = true;
-          result.innerHTML += "Answer: " + wordleword;
-        }
-        
-        else {
-          word.value = "";
-          tries++;
-        }
-      }
-    }
-  } // end wordle
+    pagewordle.classList.remove("hidden");
+    wordleinput.focus();
+  }
   
   // Motigma
-  else if(game == 1){
-    tries = 0;
-    
-    board.innerHTML = "<p><input id=word> <button id=ok>OK</button> (5 letters)<p><div id=result></div>";
-    
-    word.focus();
-    
-    // 5-letter words with no repeated letters
-    motigmawords = words.filter(w => w.length === 5 && new Set(w).size === 5);
-    //console.log(motigmawords);
-    
-    // Word of the day
-    motigmaword = motigmawords[(days * 9999) % motigmawords.length];
-    //console.log(motigmaword);
-    
-    // word
-    word.onkeyup = word.oninput = (key) => {
-      word.value = word.value.toUpperCase();
-      if(key.key == "Enter"){
-        ok.click();
-      }
-    }
-    
-    // OK
-    ok.onclick = () => {
-      if(word.value.length == 5){
-      
-        // Non existing word
-        if(!words.includes(word.value)){
-          return;
-        }
-        
-        // Score
-        motigmascore = "";
-        motigmapoints = 0;
-        for(i = 0; i < 5; i++){
-          
-          // orange
-          if(motigmaword.includes(word.value[i])){
-            motigmapoints ++;
-          }
-        }
-
-        // score
-        result.innerHTML += "<p>" + word.value + " (" + motigmapoints + ")";  
-        
-        // Win 
-        if(word.value == motigmaword){
-          word.value = "Congrats!";
-          word.disabled = true;
-          result.innerHTML += "<p>Score: " + (tries + 1);
-        }
-        
-        else {
-          word.value = "";
-          tries++;
-        }
-      }
-    }
+  if(game == 1){
+    pagemotigma.classList.remove("hidden");
+    motigmainput.focus();
   }
   
   // Spelling bee
-  else if(game == 2){
-    
-    // 5-letter words
-    beewords = words.filter(w => w.length === 5 && new Set(w).size === 5);
-    //console.log(beewords);
-    
-    // Word of the day
-    beeword = beewords[(days * 999) % beewords.length];
-    //console.log(beeword);
-      
-    board.innerHTML = "<h2><span style=color:red>" + beeword[0] + " </span>" + [...beeword.slice(1)].sort().join(" ") + "</h2><p><input id=word> <button id=ok>OK</button><p><div id=result></div><p id=total>";
-    
-    setTimeout(()=>{
-      
-      // solutions of the day
-      solutions = [];
-      for(i = 0; i < words.length; i++){
-        win = 1;
-        if(words[i].length > 2 && words[i].includes(beeword[0])){
-          for(j = 0; j < words[i].length; j++){
-            if(!beeword.includes(words[i][j])){
-              win = 0;
-            }
-          }
-          if(win == 1) solutions.push(words[i]);
-        }
-      }
-      //console.log(solutions);
-      total.innerHTML = "score: <span id=score>0</span> / " + solutions.length;
-    }, 100);
-    
-    word.focus();
-    
-    // word
-    word.onkeyup = word.oninput = (key) => {
-      word.value = word.value.toUpperCase();
-      if(key.key == "Enter"){
-        ok.click();
-      }
-    }
-    
-    // OK
-    wordsfound = [];
-    
-    ok.onclick = () => {
-      if(solutions.includes(word.value) && !wordsfound.includes(word.value)){
-        
-        // score
-        result.innerHTML += "<p>" + word.value;
-        wordsfound.push(word.value);
-        score.innerHTML = wordsfound.length;
-      }
-      word.value = "";
-      if(wordsfound.length == solutions.length){
-        word.value = "Congrats!";
-        word.disabled = true;
-      }
-    } 
+  if(game == 2){
+    pagespellingbee.classList.remove("hidden");
+    spellingbeeinput.focus();
   }
-
+  
   // Boggle
-  else if(game == 3){
-  
-    // all letters
-    letters = "AAEEGNAOOTTWCIMOTUDISTTYEIOSSTDELRVYEHRTVWACHOPSHIMNUQEEINSUAFFKPSHLNNRZEEGHNWDEILRXELRTTYABBJOO";
-    
-    // letters of the day
-    todayletters = [];
-    for(i = 0; i < 16; i++){
-      todayletters.push(letters[(days * i) % letters.length]);
-      letters = letters.replace(todayletters[todayletters.length-1],'');
-      //console.log(letters, todayletters);
-    }
-    
-    board.innerHTML = "<h2>" + todayletters.join(" ").replace(/(. . . .)/g,"$1<br>")+"</h2><p><input id=word> <button id=ok>OK</button><p><div id=result></div><p id=score>";
-    
-    word.focus();
-    
-    // words of the day
-    todaywords = [
-      // 16 sub-arrays for each starting letter
-    ];
-    
-    links = [];
-    
-    for(i = 0; i < 16; i++){
-      links[i] = [];
-      
-      // top left
-      if((i / 4) >= 1 && (i % 4) >= 1){
-        links[i].push([i-5, todayletters[i-5]]);
-      }
-      
-      // top
-      if((i / 4) >= 1){
-        links[i].push([i-4, todayletters[i-4]]);
-      }
-      
-      // top right
-      if((i / 4) >= 1 && (i % 4) < 3){
-        links[i].push([i-3, todayletters[i-3]]);
-      }
-      
-      // left
-      if((i % 4) >= 1){
-        links[i].push([i-1, todayletters[i-1]]);
-      }
-      
-      // right
-      if((i % 4) < 3){
-        links[i].push([i+1, todayletters[i+1]]);
-      }
-      
-      // bottom left
-      if((i / 4) < 3 && (i % 4) >= 1){
-        links[i].push([i+3, todayletters[i+3]]);
-      }
-      
-      // bottom
-      if((i / 4) < 3){
-        links[i].push([i+4, todayletters[i+4]]);
-      }
-      
-      // bottom right
-      if((i / 4) < 3 && (i % 4) < 3){
-        links[i].push([i+5, todayletters[i+5]]);
-      }
-      
-      
-    }
-    
-    //console.log(links);
-    
-    // check if words are in the grid
-    //console.log("RA", checkboggle("RA"));
-    //console.log("PLANTER", checkboggle("PLANTERA"));
-    //console.log("HERBAL", checkboggle("HERBAL"));
-    //console.log("BANANA", checkboggle("BANANA"));
-    
-    bogglewords = [];
-    test = 0;
-    interval = setInterval(()=>{
-      for(i = test; i < test+10000; i++){
-        if(i > words.length){
-          clearInterval(interval);
-          score.innerHTML = "Score: <span id=bogglescore>0</span> / " + bogglewords.length;
-        }
-        if(words[i] && checkboggle(words[i])){
-          bogglewords.push(words[i]);
-        }
-      }
-      test = i;
-      //console.log(bogglewords.length);
-    },16);
-    
-    // word
-    word.onkeyup = word.oninput = (key) => {
-      word.value = word.value.toUpperCase();
-      if(key.key == "Enter"){
-        ok.click();
-      }
-    }
-    
-    // OK
-    wordsfound = [];
-    
-    ok.onclick = () => {
-      if(bogglewords.includes(word.value) && !wordsfound.includes(word.value)){
-        
-        // score
-        result.innerHTML += "<p>" + word.value;
-        wordsfound.push(word.value);
-        bogglescore.innerHTML = wordsfound.length;
-      }
-      word.value = "";
-      if(wordsfound.length == bogglewords.length){
-        word.value = "Congrats!";
-        word.disabled = true;
-      }
-    } 
-    
+  if(game == 3){
+    pageboggle.classList.remove("hidden");
+    boggleinput.focus();
   }
-
+  
   // Maxiword
-  else if(game == 4){
-    
-    // all letters
-    letters = "AAEEGNAOOTTWCIMOTUDISTTYEIOSSTDELRVYEHRTVWACHOPSHIMNUQEEINSUAFFKPSHLNNRZEEGHNWDEILRXELRTTYABBJOO";
-    
-    // letters of the day 
-    todayletters = [];
-    for(i = 0; i < 49; i++){
-      todayletters.push(letters[(days * 99 * i) % letters.length]);
-      letters = letters.replace(todayletters[todayletters.length-1],'');
-      //console.log(letters, todayletters);
-    }
-    
-    // strings (rows/cols) of the day
-    todaystrings = [];
-    
-    // rows
-    for(i = 0; i < 7; i++){
-      todaystrings[i] = "";
-      for(j = 0; j < 7; j++){
-        todaystrings[i] += todayletters[i*7+j];
-      }
-    }
-    
-    // cols
-    for(i = 0; i < 7; i++){
-      todaystrings[i+7] = "";
-      for(j = 0; j < 7; j++){
-        todaystrings[i+7] += todayletters[j*7+i];
-      }
-    }
-    //console.log(todaystrings);
-    
-    // board
-    inputs = 0;
-    board.innerHTML = "<h2>" + todayletters.join(" ").replace(/(. . . . . . .)/g,(a)=>{return a + " <input id=word" + (inputs++) + "><br>"})+"</h2><p>" + ".......".replace(/./g,()=>{ return "<textarea id=word" + (inputs++) + " rows=7 cols=1 maxlength=7 style='display:inline;resize:none;width:12px;margin:0 4px 0 0;'></textarea>" }) + "<p><button id=ok>OK</button><p><div id=result></div>";
-    
-    setTimeout(()=>{
-    
-      // best scores of the day
-      todaybestscore = 0;
-      todaybest = ["","","","","","","","","","","","","",""];
-      for(i = 0; i < 14; i++){
-        for(j = 0; j < words.length; j++){
-          if(words[j].length >= todaybest[i].length){
-            if(isSubset(words[j], todaystrings[i])){
-              todaybest[i] = words[j];
-            }
-          }
-        }
-        todaybestscore += todaybest[i].length;
-      }
-      
-      //console.log(todaybest, todaybestscore);
-      
-      // result
-      result.innerHTML = "Score: <span id=score>0</span> / " + todaybestscore;
-      
-    }, 100);
-    
-    oninput = onkeyup = (e) => {
-      //console.log(e);
-      e.srcElement.value = e.srcElement.value.toUpperCase().trim();
-      if(e.key == "Enter"){
-        ok.click();
-      }
-    }
-    
-    ok.onclick = () => {
-      maxitotal = 0;
-      for(i = 0; i < 14; i++){
-        input = window["word" + i];
-        value = input.value.trim();
-        if(value && isSubset(value, todaystrings[i]) && words.includes(value)){
-          maxitotal += value.length;
-        }
-        else {
-          input.value = "";
-        }
-      }
-      score.innerHTML = maxitotal;
-    }
-  
+  if(game == 4){
+    pagemaxiword.classList.remove("hidden");
+    maxiwordinput.focus();
   }
-  
 }
 
+// Wordle
+// ======
+
+wordletries = 0;
+
+// input
+wordleinput.onkeyup = (key) => {
+  if(key.key == "Enter"){
+    wordleok.click();
+  }
+}
+
+// OK
+wordleok.onclick = () => {
+
+  currentword = wordleinput.value;
+  if(currentword.length == 5){
+  
+    // Non existing word
+    if(!words.includes(currentword)){
+      return;
+    }
+    
+    // Score
+    wordlescore = "";
+    for(i = 0; i < 5; i++){
+    
+      // green
+      if(currentword[i] == wordleword[i]){
+        wordlescore += "<div class=green>" + currentword[i] + "</div>";
+      }
+      
+      // orange
+      else if(wordleword.includes(currentword[i])){
+        wordlescore += "<div class=orange>" + currentword[i] + "</div>";
+      }
+      
+      // black
+      else {
+        wordlescore += "<div class=no>" + currentword[i] + "</div>";
+      }
+    }
+
+    // score
+    wordleresult.innerHTML += "<p>" + wordlescore;  
+    
+    // Win 
+    if(currentword == wordleword){
+      wordleinput.value = "Congrats!";
+      wordleinput.disabled = true;
+    }
+    
+    // lose
+    else if(wordletries == 5){
+      wordleinput.value = "Lost!";
+      wordleinput.disabled = true;
+      wordleresult.innerHTML += "<p>Answer: " + wordleword;
+    }
+    
+    else {
+      wordleinput.value = "";
+      wordletries++;
+    }
+  }
+}
+ 
+ 
+// Motigma
+
+motigmatries = 0;
+
+// input
+motigmainput.onkeyup = (key) => {
+  if(key.key == "Enter"){
+    motigmaok.click();
+  }
+}
+
+// OK
+motigmaok.onclick = () => {
+  currentword = motigmainput.value;
+  if(currentword.length == 5){
+  
+    // Non existing word
+    if(!words.includes(currentword)){
+      return;
+    }
+    
+    motigmatries++;
+    
+    // Score
+    motigmascore = "";
+    motigmapoints = 0;
+    for(i = 0; i < 5; i++){
+      if(motigmaword.includes(currentword[i])){
+        motigmapoints++;
+      }
+    }
+
+    // score
+    motigmaresult.innerHTML += "<p>" + currentword + ["0️⃣","1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣","7️⃣", "8️⃣", "9️⃣"][motigmapoints];  
+    
+    // Win 
+    if(currentword == motigmaword){
+      motigmainput.value = "Congrats!";
+      motigmainput.disabled = true;
+      motigmaresult.innerHTML += "<p>Score: " + motigmatries;
+    }
+    
+    else {
+      motigmainput.value = "";
+    }
+  }
+}
+
+
+// Spelling bee 
+  
+// input
+spellingbeeinput.onkeyup = key => {
+  if(key.key == "Enter"){
+    spellingbeeok.click();
+  }
+}
+
+// OK
+spellingbeewordsfound = [];
+spellingbeeok.onclick = () => {
+  currentword = spellingbeeinput.value;
+  if(spellingbeesolutions.includes(currentword) && !spellingbeewordsfound.includes(currentword)){
+    
+    // score
+    spellingbeeresult.innerHTML += currentword + "&nbsp;&nbsp;";
+    spellingbeewordsfound.push(currentword);
+    spellingbeescore.innerHTML = spellingbeewordsfound.length;
+  }
+  spellingbeeinput.value = "";
+  if(spellingbeewordsfound.length == spellingbeesolutions.length){
+    spellingbeeinput.value = "Congrats!";
+    spellingbeeinput.disabled = true;
+  }
+} 
+
+
+// Boggle
+  
+// input
+boggleinput.onkeyup = key => {
+  if(key.key == "Enter"){
+    boggleok.click();
+  }
+}
+
+// OK
+bogglewordsfound = [];
+boggleok.onclick = () => {
+  currentword = boggleinput.value;
+  if(bogglewords.includes(currentword) && !bogglewordsfound.includes(currentword)){
+    
+    // score
+    boggleresult.innerHTML += currentword + "&nbsp;&nbsp;";
+    bogglewordsfound.push(currentword);
+    bogglescore.innerHTML = bogglewordsfound.length;
+  }
+  boggleinput.value = "";
+  if(bogglewordsfound.length == bogglewords.length){
+    boggleinput.value = "Congrats!";
+    boggleinput.disabled = true;
+  }
+} 
+
+// Maxiword
+/*   
+  // all letters
+  letters = "AAEEGNAOOTTWCIMOTUDISTTYEIOSSTDELRVYEHRTVWACHOPSHIMNUQEEINSUAFFKPSHLNNRZEEGHNWDEILRXELRTTYABBJOO";
+  
+  // letters of the day 
+  todayletters = [];
+  for(i = 0; i < 49; i++){
+    todayletters.push(letters[(days * 99 * i) % letters.length]);
+    letters = letters.replace(todayletters[todayletters.length-1],'');
+    //console.log(letters, todayletters);
+  }
+  
+  // strings (rows/cols) of the day
+  todaystrings = [];
+  
+  // rows
+  for(i = 0; i < 7; i++){
+    todaystrings[i] = "";
+    for(j = 0; j < 7; j++){
+      todaystrings[i] += todayletters[i*7+j];
+    }
+  }
+  
+  // cols
+  for(i = 0; i < 7; i++){
+    todaystrings[i+7] = "";
+    for(j = 0; j < 7; j++){
+      todaystrings[i+7] += todayletters[j*7+i];
+    }
+  }
+  //console.log(todaystrings);
+  
+  // board
+  inputs = 0;
+  board.innerHTML = "<h2>" + todayletters.join(" ").replace(/(. . . . . . .)/g,(a)=>{return a + " <input id=word" + (inputs++) + "><br>"})+"</h2><p>" + ".......".replace(/./g,()=>{ return "<textarea id=word" + (inputs++) + " rows=7 cols=1 maxlength=7 style='display:inline;resize:none;width:12px;margin:0 4px 0 0;'></textarea>" }) + "<p><button id=ok>OK</button><p><div id=result></div>";
+  
+  setTimeout(()=>{
+  
+    // best scores of the day
+    todaybestscore = 0;
+    todaybest = ["","","","","","","","","","","","","",""];
+    for(i = 0; i < 14; i++){
+      for(j = 0; j < words.length; j++){
+        if(words[j].length >= todaybest[i].length){
+          if(isSubset(words[j], todaystrings[i])){
+            todaybest[i] = words[j];
+          }
+        }
+      }
+      todaybestscore += todaybest[i].length;
+    }
+    
+    //console.log(todaybest, todaybestscore);
+    
+    // result
+    result.innerHTML = "Score: <span id=score>0</span> / " + todaybestscore;
+    
+  }, 100);
+  
+  oninput = onkeyup = (e) => {
+    //console.log(e);
+    e.srcElement.value = e.srcElement.value.toUpperCase().trim();
+    if(e.key == "Enter"){
+      ok.click();
+    }
+  }
+  
+  ok.onclick = () => {
+    maxitotal = 0;
+    for(i = 0; i < 14; i++){
+      input = window["word" + i];
+      value = input.value.trim();
+      if(value && isSubset(value, todaystrings[i]) && words.includes(value)){
+        maxitotal += value.length;
+      }
+      else {
+        input.value = "";
+      }
+    }
+    score.innerHTML = maxitotal;
+  }
+*/
+
+// Close game
+onclick = e => {
+  if(e.target.classList.contains("x")){
+    pagemenu.classList.remove("hidden");
+    pagewordle.classList.add("hidden");
+    pagemotigma.classList.add("hidden");
+    pagespellingbee.classList.add("hidden");
+    pageboggle.classList.add("hidden");
+    pagemaxiword.classList.add("hidden");
+  }
+}
+
+// Inputs in uppercase / trimmed
+oninput = onkeyup = (e) => {
+  e.srcElement.value = e.srcElement.value.toUpperCase().trim();
+}
+
+
 </script>
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&display=swap');
+.mono {
+  font-family: "Fira Mono", monospace;
+  font-weight: 400;
+  font-style: normal;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	border: 0;
+  box-sizing: border-box;
+}
+html { min-height: 100vh; background: #fff; }
+body { width: 490px; margin: auto; background: linear-gradient(#def,#fff); padding: 20px; width: 490px; min-height: 100vh; font: 20px calibri, arial, sans-serif; position: relative; }
+h1 { text-align: center; font-size: 80px; color: #037; margin: 10px 0; user-select: none; }
+h2 { text-align: center; font-size: 20px; color: #222; margin: 10px; user-select: none; }
+h3 { text-align: center; font-size: 40px; color: #222; margin: 10px; user-select: none; }
+button { padding: 10px; border: 2px solid; background: #eee; font-size: 20px; font-weight: bold; }
+input { padding: 10px; border: 2px solid; background: #fff; font-size: 20px; font-weight: bold; width: 200px; }
+#menu button { width: 200px; display: block; margin: 20px auto 0; user-select: none; }
+#day { position: absolute; bottom: 0; right: 0; margin: 20px; font-size: 12px; }
+.x { position: absolute; top: 0; right: 0; margin: 0 20px; font-size: 50px; cursor: pointer; user-select: none; }
+#wordleresult { font-size: 30px; text-align: center }
+#motigmaresult { font-size: 25px; font-weight: bold; text-align: center; font-family: "Fira Mono", monospace; letter-spacing: 2px; }
+#spellingbeeresult { font-size: 25px; font-weight: bold; text-align: center; }
+#spellingbeetotal { text-align: center; }
+#boggleresult { font-size: 25px; font-weight: bold; text-align: center; }
+#boggletotal { text-align: center; }
+#motigmaresult p { width: 150px; display: inline-block; }
+#boggleboard { font-size: 30px; font-weight: bold; text-align: center; font-family: "Fira Mono", monospace; letter-spacing: 0px; margin: 20px 0; }
+p { margin: 10px 0 } 
+.green, .orange, .no { display: inline-block; width: 40px; height: 40px; margin: 0 7px 0 0; padding: 5px; line-height: 30px; font-weight: bold; }
+.green { background: #7e7 }
+.orange { background: #fb5 }
+.hidden { display: none }
+</style>
