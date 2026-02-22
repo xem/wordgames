@@ -70,9 +70,23 @@
   <h2>Find the longest word in each row and column.<br>Your score is the total length of your words.</h2>
   <center>
     <div id=maxiwordboard></div>
-    <p><input id=maxiwordinput> <button id=maxiwordok>OK</button>
+    <div class=maxiwordinputs>
+    <p>Horizontal
+    <p><input id=maxiwordinput0>
+    <p><input id=maxiwordinput1>
+    <p><input id=maxiwordinput2>
+    <p><input id=maxiwordinput3>
+    <p><input id=maxiwordinput4>
+    <p>Vertical
+    <p><input id=maxiwordinput5>
+    <p><input id=maxiwordinput6>
+    <p><input id=maxiwordinput7>
+    <p><input id=maxiwordinput8>
+    <p><input id=maxiwordinput9>
+    </div>
+    <p>
+    <button id=maxiwordok>OK</button>
   </center>
-  <p><div id=maxiwordresult></div>
   <p><div id=maxiwordtotal></div>
 </div>
 
@@ -93,7 +107,6 @@ setInterval(()=>{
 
 // Days since 01-01-1970
 const days = Math.floor(Date.UTC(new Date().getUTCFullYear(),new Date().getUTCMonth(),new Date().getUTCDate())/86400000);
-//console.log(days);
 
 const isSubset = (a, b) => {
   for(var i = 0; i < a.length; i++){
@@ -120,10 +133,8 @@ checkboggle = (word) => {
 }
 
 subcheckboggle = (word, index, grid) => {
-  //console.log(word, index, grid);
   if(word.length == 0) return true;
   var link = bogglelinks[index];
-  //console.log(link);
   for(var i = 0; i < link.length; i++){
     if(link[i][1] == word[0] && grid[link[i][0]] != "?"){
       tmp = grid.slice(); // copy grid
@@ -136,15 +147,19 @@ subcheckboggle = (word, index, grid) => {
   return false;
 }
 
-// Choose language
+// Choose language / init games
 words = [];
 lang = (dico, langId) => {
   words = dico;
   if(langId == 0){
-    pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>SPELLING BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIWORD</button>`;
+    pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>SPELLING BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIWORD</button>
+    <p>
+    <a id=shareEN href="whatsapp://send?text=I played Word Games" data-action="share/whatsapp/share">Share my scores on WhatsApp</a>`;
   }
   else {
-    pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>LA BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIMOT</button>`;
+    pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>LA BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIMOT</button>
+    <p>
+    <a id=shareFR href="whatsapp://send?text=j'ai joué à Word Games" data-action="share/whatsapp/share">Share my scores on WhatsApp</a>`;
   }
   
   wordle.onclick = () => game(0);
@@ -267,6 +282,64 @@ lang = (dico, langId) => {
       }
     }
     boggletotal.innerHTML = "Score: <span id=bogglescore>0</span> / " + bogglewords.length;
+  
+  // Maxiword
+  
+    // all letters
+    maxiwordletters = "AAEEGNAOOTTWCIMOTUDISTTYEIOSSTDELRVYEHRTVWACHOPSHIMNUQEEINSUAFFKPSHLNNRZEEGHNWDEILRXELRTTYABBJOO";
+
+    // letters of the day 
+    maxiwordtodayletters = [];
+    for(i = 0; i < 25; i++){
+      maxiwordtodayletters.push(maxiwordletters[(days * 99 * i) % maxiwordletters.length]);
+      maxiwordletters = maxiwordletters.replace(maxiwordtodayletters[maxiwordtodayletters.length-1],'');
+    }
+
+    // strings (rows/cols) of the day
+    maxiwordtodaystrings = [];
+
+    // rows
+    for(i = 0; i < 5; i++){
+      maxiwordtodaystrings[i] = "";
+      for(j = 0; j < 5; j++){
+        maxiwordtodaystrings[i] += maxiwordtodayletters[i*5+j];
+      }
+    }
+
+    // cols
+    for(i = 0; i < 5; i++){
+      maxiwordtodaystrings[i+5] = "";
+      for(j = 0; j < 5; j++){
+        maxiwordtodaystrings[i+5] += maxiwordtodayletters[j*5+i];
+      }
+    }
+
+    // board
+    maxiwordboard.innerHTML =  maxiwordtodayletters.join(" ").replace(/(. . . . .)/g,"$1<br>");
+    
+    maxiwordinputs = 0;
+      
+    setTimeout(()=>{
+
+      // best scores of the day
+      maxiwordtodaybestscore = 0;
+      
+      maxiwordtodaybest = ["","","","","","","","","","","","","",""];
+      for(i = 0; i < 10; i++){
+        for(j = 0; j < words.length; j++){
+          if(words[j].length < 6 && words[j].length >= maxiwordtodaybest[i].length){
+            if(isSubset(words[j], maxiwordtodaystrings[i])){
+              maxiwordtodaybest[i] = words[j];
+            }
+          }
+        }
+        maxiwordtodaybestscore += maxiwordtodaybest[i].length;
+      }
+      
+      // result
+      maxiwordtotal.innerHTML = "Score: <span id=maxiwordscore>0</span> / " + maxiwordtodaybestscore;
+      
+    }, 100);
 }
 
 en.onclick = () => lang(EN, 0);
@@ -303,7 +376,7 @@ game = game => {
   // Maxiword
   if(game == 4){
     pagemaxiword.classList.remove("hidden");
-    maxiwordinput.focus();
+    maxiwordinput0.focus();
   }
 }
 
@@ -320,6 +393,7 @@ wordleinput.onkeyup = (key) => {
 }
 
 // OK
+wordlewin = 0;
 wordleok.onclick = () => {
 
   currentword = wordleinput.value;
@@ -357,6 +431,7 @@ wordleok.onclick = () => {
     if(currentword == wordleword){
       wordleinput.value = "Congrats!";
       wordleinput.disabled = true;
+      wordlewin = wordletries;
     }
     
     // lose
@@ -377,6 +452,7 @@ wordleok.onclick = () => {
 // Motigma
 
 motigmatries = 0;
+motigmawin = 0;
 
 // input
 motigmainput.onkeyup = (key) => {
@@ -414,6 +490,7 @@ motigmaok.onclick = () => {
       motigmainput.value = "Congrats!";
       motigmainput.disabled = true;
       motigmaresult.innerHTML += "<p>Score: " + motigmatries;
+      motigmawin = motigmatries;
     }
     
     else {
@@ -479,88 +556,24 @@ boggleok.onclick = () => {
 } 
 
 // Maxiword
-/*   
-  // all letters
-  letters = "AAEEGNAOOTTWCIMOTUDISTTYEIOSSTDELRVYEHRTVWACHOPSHIMNUQEEINSUAFFKPSHLNNRZEEGHNWDEILRXELRTTYABBJOO";
-  
-  // letters of the day 
-  todayletters = [];
-  for(i = 0; i < 49; i++){
-    todayletters.push(letters[(days * 99 * i) % letters.length]);
-    letters = letters.replace(todayletters[todayletters.length-1],'');
-    //console.log(letters, todayletters);
-  }
-  
-  // strings (rows/cols) of the day
-  todaystrings = [];
-  
-  // rows
-  for(i = 0; i < 7; i++){
-    todaystrings[i] = "";
-    for(j = 0; j < 7; j++){
-      todaystrings[i] += todayletters[i*7+j];
+
+// OK 
+maxiwordtodayscore = 0;
+maxiwordok.onclick = () => {
+  maxiwordtodayscore = 0;
+  for(i = 0; i < 10; i++){
+    input = window["maxiwordinput" + i];
+    value = input.value.trim();
+    if(value && isSubset(value, maxiwordtodaystrings[i]) && words.includes(value)){
+      maxiwordtodayscore += value.length;
+    }
+    else {
+      input.value = "";
     }
   }
-  
-  // cols
-  for(i = 0; i < 7; i++){
-    todaystrings[i+7] = "";
-    for(j = 0; j < 7; j++){
-      todaystrings[i+7] += todayletters[j*7+i];
-    }
-  }
-  //console.log(todaystrings);
-  
-  // board
-  inputs = 0;
-  board.innerHTML = "<h2>" + todayletters.join(" ").replace(/(. . . . . . .)/g,(a)=>{return a + " <input id=word" + (inputs++) + "><br>"})+"</h2><p>" + ".......".replace(/./g,()=>{ return "<textarea id=word" + (inputs++) + " rows=7 cols=1 maxlength=7 style='display:inline;resize:none;width:12px;margin:0 4px 0 0;'></textarea>" }) + "<p><button id=ok>OK</button><p><div id=result></div>";
-  
-  setTimeout(()=>{
-  
-    // best scores of the day
-    todaybestscore = 0;
-    todaybest = ["","","","","","","","","","","","","",""];
-    for(i = 0; i < 14; i++){
-      for(j = 0; j < words.length; j++){
-        if(words[j].length >= todaybest[i].length){
-          if(isSubset(words[j], todaystrings[i])){
-            todaybest[i] = words[j];
-          }
-        }
-      }
-      todaybestscore += todaybest[i].length;
-    }
-    
-    //console.log(todaybest, todaybestscore);
-    
-    // result
-    result.innerHTML = "Score: <span id=score>0</span> / " + todaybestscore;
-    
-  }, 100);
-  
-  oninput = onkeyup = (e) => {
-    //console.log(e);
-    e.srcElement.value = e.srcElement.value.toUpperCase().trim();
-    if(e.key == "Enter"){
-      ok.click();
-    }
-  }
-  
-  ok.onclick = () => {
-    maxitotal = 0;
-    for(i = 0; i < 14; i++){
-      input = window["word" + i];
-      value = input.value.trim();
-      if(value && isSubset(value, todaystrings[i]) && words.includes(value)){
-        maxitotal += value.length;
-      }
-      else {
-        input.value = "";
-      }
-    }
-    score.innerHTML = maxitotal;
-  }
-*/
+  maxiwordscore.innerHTML = maxiwordtodayscore;
+}
+
 
 // Close game
 onclick = e => {
@@ -577,13 +590,36 @@ onclick = e => {
 // Inputs in uppercase / trimmed
 oninput = onkeyup = (e) => {
   e.srcElement.value = e.srcElement.value.toUpperCase().trim();
+  if(e.key == "Enter" || e.key == "Tab"){
+    maxiwordok.click();
+  }
 }
 
+// Share scores
+setInterval(()=>{
+  
+  if(window.shareEN){
+    shareEN.href="whatsapp://send?text=I played Word Games in english!%0A";
+    if(wordlewin) shareEN.href += "Wordle: " + wordlewin + " tries%0A";
+    if(motigmawin) shareEN.href += "Motigma: " + motigmawin + " tries%0A";
+    if(spellingbeewordsfound.length) shareEN.href += "Spelling Bee: " + spellingbeewordsfound.length + "/" + spellingbeesolutions.length + " words%0A";
+    if(bogglewordsfound.length) shareEN.href += "Boggle: " + bogglewordsfound.length + "/" + bogglewords.length + " words%0A";
+    if(maxiwordtodayscore) shareEN.href += "Maxiword: " + maxiwordtodayscore + "/" + maxiwordtodaybestscore + " points";
+  }
+  if(window.shareFR){
+    shareFR.href="whatsapp://send?text=J'ai joué à Word Games en français!%0A";
+    if(wordlewin) shareFR.href += "Wordle: " + wordlewin + " essais%0A";
+    if(motigmawin) shareFR.href += "Motigma: " + motigmawin + " essais%0A";
+    if(spellingbeewordsfound.length) shareFR.href += "Spelling Bee: " + spellingbeewordsfound.length + "/" + spellingbeesolutions.length + " mots%0A";
+    if(bogglewordsfound.length) shareFR.href += "Boggle: " + bogglewordsfound.length + "/" + bogglewords.length + " mots%0A";
+    if(maxiwordtodayscore) shareFR.href += "Maxiword: " + maxiwordtodayscore + "/" + maxiwordtodaybestscore + " points";
+  }
+}, 1000);
 
 </script>
 <style>
 
-@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700');
 .mono {
   font-family: "Fira Mono", monospace;
   font-weight: 400;
@@ -598,7 +634,7 @@ oninput = onkeyup = (e) => {
 }
 html { min-height: 100vh; background: #fff; }
 body { width: 490px; margin: auto; background: linear-gradient(#def,#fff); padding: 20px; width: 490px; min-height: 100vh; font: 20px calibri, arial, sans-serif; position: relative; }
-h1 { text-align: center; font-size: 80px; color: #037; margin: 10px 0; user-select: none; }
+h1 { text-align: center; font-size: 80px; color: #037; margin: 0; user-select: none; }
 h2 { text-align: center; font-size: 20px; color: #222; margin: 10px; user-select: none; }
 h3 { text-align: center; font-size: 40px; color: #222; margin: 10px; user-select: none; }
 button { padding: 10px; border: 2px solid; background: #eee; font-size: 20px; font-weight: bold; }
@@ -614,9 +650,15 @@ input { padding: 10px; border: 2px solid; background: #fff; font-size: 20px; fon
 #boggletotal { text-align: center; }
 #motigmaresult p { width: 150px; display: inline-block; }
 #boggleboard { font-size: 30px; font-weight: bold; text-align: center; font-family: "Fira Mono", monospace; letter-spacing: 0px; margin: 20px 0; }
+#maxiwordboard { font-size: 30px; font-weight: bold; text-align: center; font-family: "Fira Mono", monospace; letter-spacing: 0px; margin: 20px 0; }
+.maxiwordinputs { font-size: 20px; font-weight: bold; margin: 20px 0; columns: 2; vertical-align: top; }
+.maxiwordinputs input { padding: 5px; width: 180px; }
+.maxiwordinputs p { margin: 0 0 5px; }
+#maxiwordtotal { text-align: center; }
 p { margin: 10px 0 } 
 .green, .orange, .no { display: inline-block; width: 40px; height: 40px; margin: 0 7px 0 0; padding: 5px; line-height: 30px; font-weight: bold; }
 .green { background: #7e7 }
 .orange { background: #fb5 }
 .hidden { display: none }
+#pagemenu a { text-decoration: none; text-align: center; display: block; width: 400px; position: absolute; bottom: 10px; font-size: 24px; }
 </style>
