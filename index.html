@@ -23,7 +23,7 @@
   <br>
   <p>
   <center>
-    <input id=wordleinput> <button id=wordleok>OK</button></center>
+    <input autocomplete="off" id=wordleinput> <button id=wordleok>OK</button></center>
   <br>
   <p><div id=wordleresult></div>
 </div>
@@ -35,7 +35,7 @@
   <br>
   <p>
   <center>
-    <input id=motigmainput> <button id=motigmaok>OK</button></center>
+    <input autocomplete="off" id=motigmainput> <button id=motigmaok>OK</button></center>
   <br>
   <p><div id=motigmaresult></div>
 </div>
@@ -46,7 +46,7 @@
   <h2>Find as many words as possible with these letters.<br>The red letter is mandatory.<br>Words must be at least 3 letters long.</h2>
   <center>
     <div id=spellingbeeboard></div>
-    <p><input id=spellingbeeinput> <button id=spellingbeeok>OK</button>
+    <p><input autocomplete="off" id=spellingbeeinput> <button id=spellingbeeok>OK</button>
   </center>
   <p><div id=spellingbeeresult></div>
   <p><div id=spellingbeetotal></div>
@@ -58,7 +58,7 @@
   <h2>Find words made from neighbour letters.<br>Each letter can only be used once per word.<br>Words must be at least 3 letters long.</h2>
   <center>
     <div id=boggleboard></div>
-    <p><input id=boggleinput> <button id=boggleok>OK</button>
+    <p><input autocomplete="off" id=boggleinput> <button id=boggleok>OK</button>
   </center>
   <p><div id=boggleresult></div>
   <p><div id=boggletotal></div>
@@ -67,22 +67,22 @@
 <div id=pagemaxiword class=hidden>
   <div class=x>×</div>
   <h1>Maxiword</h1>
-  <h2>Find the longest word in each row and column.<br>Your score is the total length of your words.</h2>
+  <h2>Find the longest word in each row and column.<br>The letters can't be use multiple times per word.<br>Your score is the total length of your words.</h2>
   <center>
     <div id=maxiwordboard></div>
     <div class=maxiwordinputs>
     <p>Horizontal
-    <p><input id=maxiwordinput0>
-    <p><input id=maxiwordinput1>
-    <p><input id=maxiwordinput2>
-    <p><input id=maxiwordinput3>
-    <p><input id=maxiwordinput4>
+    <p><input autocomplete="off" id=maxiwordinput0 placeholder="line 1">
+    <p><input autocomplete="off" id=maxiwordinput1 placeholder="line 2">
+    <p><input autocomplete="off" id=maxiwordinput2 placeholder="line 3">
+    <p><input autocomplete="off" id=maxiwordinput3 placeholder="line 4">
+    <p><input autocomplete="off" id=maxiwordinput4 placeholder="line 5">
     <p>Vertical
-    <p><input id=maxiwordinput5>
-    <p><input id=maxiwordinput6>
-    <p><input id=maxiwordinput7>
-    <p><input id=maxiwordinput8>
-    <p><input id=maxiwordinput9>
+    <p><input autocomplete="off" id=maxiwordinput5 placeholder="column 1">
+    <p><input autocomplete="off" id=maxiwordinput6 placeholder="column 2">
+    <p><input autocomplete="off" id=maxiwordinput7 placeholder="column 3">
+    <p><input autocomplete="off" id=maxiwordinput8 placeholder="column 4">
+    <p><input autocomplete="off" id=maxiwordinput9 placeholder="column 5">
     </div>
     <p>
     <button id=maxiwordok>OK</button>
@@ -324,7 +324,7 @@ lang = (dico, langId) => {
       // best scores of the day
       maxiwordtodaybestscore = 0;
       
-      maxiwordtodaybest = ["","","","","","","","","","","","","",""];
+      maxiwordtodaybest = ["","","","","","","","","",""];
       for(i = 0; i < 10; i++){
         for(j = 0; j < words.length; j++){
           if(words[j].length < 6 && words[j].length >= maxiwordtodaybest[i].length){
@@ -334,6 +334,9 @@ lang = (dico, langId) => {
           }
         }
         maxiwordtodaybestscore += maxiwordtodaybest[i].length;
+        if(maxiwordtodaybest[i].length == 0){
+          window["maxiwordinput" + i].disabled = true;
+        }
       }
       
       // result
@@ -516,7 +519,7 @@ spellingbeeok.onclick = () => {
   if(spellingbeesolutions.includes(currentword) && !spellingbeewordsfound.includes(currentword)){
     
     // score
-    spellingbeeresult.innerHTML += currentword + "&nbsp;&nbsp;";
+    spellingbeeresult.innerHTML += currentword + " ";
     spellingbeewordsfound.push(currentword);
     spellingbeescore.innerHTML = spellingbeewordsfound.length;
   }
@@ -544,7 +547,7 @@ boggleok.onclick = () => {
   if(bogglewords.includes(currentword) && !bogglewordsfound.includes(currentword)){
     
     // score
-    boggleresult.innerHTML += currentword + "&nbsp;&nbsp;";
+    boggleresult.innerHTML += currentword + " ";
     bogglewordsfound.push(currentword);
     bogglescore.innerHTML = bogglewordsfound.length;
   }
@@ -661,4 +664,5 @@ p { margin: 10px 0 }
 .orange { background: #fb5 }
 .hidden { display: none }
 #pagemenu a { text-decoration: none; text-align: center; display: block; width: 100%; position: absolute; bottom: 10px; left: 0; font-size: 24px; }
+:disabled { background: #ddd }
 </style>
