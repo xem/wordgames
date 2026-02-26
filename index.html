@@ -26,6 +26,7 @@
     <input autocomplete="off" id=wordleinput> <button id=wordleok>OK</button></center>
   <br>
   <p><div id=wordleresult></div>
+  <a href="#" onclick="showwordle(); this.remove(); return false;">show solution</a>
 </div>
 
 <div id=pagemotigma class=hidden>
@@ -38,6 +39,7 @@
     <input autocomplete="off" id=motigmainput> <button id=motigmaok>OK</button></center>
   <br>
   <p><div id=motigmaresult></div>
+  <a href="#" onclick="showmotigma(); this.remove(); return false;">show solution</a>
 </div>
 
 <div id=pagespellingbee class=hidden>
@@ -50,6 +52,7 @@
   </center>
   <p><div id=spellingbeeresult></div>
   <p><div id=spellingbeetotal></div>
+  <a href="#" onclick="showspellingbee(); this.remove(); return false;">show solution</a>
 </div>
 
 <div id=pageboggle class=hidden>
@@ -62,6 +65,7 @@
   </center>
   <p><div id=boggleresult></div>
   <p><div id=boggletotal></div>
+  <a href="#" onclick="showboggle(); this.remove(); return false;">show solution</a>
 </div>
 
 <div id=pagemaxiword class=hidden>
@@ -88,6 +92,7 @@
     <button id=maxiwordok>OK</button>
   </center>
   <p><div id=maxiwordtotal></div>
+  <a href="#" onclick="showmaxiword(); this.remove(); return false;">show solution</a>
 </div>
 
 
@@ -450,6 +455,12 @@ wordleok.onclick = () => {
     }
   }
 }
+
+showwordle = () => {
+  wordleinput.value = "";
+  wordleinput.disabled = true;
+  wordleresult.innerHTML = "<p>Answer: " + wordleword;
+}
  
  
 // Motigma
@@ -502,6 +513,14 @@ motigmaok.onclick = () => {
   }
 }
 
+showmotigma = () => {
+  motigmainput.value = "";
+  motigmainput.disabled = true;
+  motigmaresult.innerHTML = "<p>Answer: " + motigmaword;
+  motigmaresult.style.fontFamily = "Calibri, Arial";
+  motigmaresult.style.fontWeight = "normal";
+  motigmaresult.style.letterSpacing = "0";
+}
 
 // Spelling bee 
   
@@ -528,7 +547,13 @@ spellingbeeok.onclick = () => {
     spellingbeeinput.value = "Congrats!";
     spellingbeeinput.disabled = true;
   }
-} 
+}
+
+showspellingbee = () => {
+  spellingbeeinput.value = "";
+  spellingbeeinput.disabled = true;
+  spellingbeeresult.innerHTML = spellingbeesolutions.join(" ");
+}
 
 
 // Boggle
@@ -556,7 +581,13 @@ boggleok.onclick = () => {
     boggleinput.value = "Congrats!";
     boggleinput.disabled = true;
   }
-} 
+}
+
+showboggle = () => {
+  boggleinput.value = "";
+  boggleinput.disabled = true;
+  boggleresult.innerHTML = bogglewords.join(" ");
+}
 
 // Maxiword
 
@@ -575,6 +606,14 @@ maxiwordok.onclick = () => {
     }
   }
   maxiwordscore.innerHTML = maxiwordtodayscore;
+}
+
+showmaxiword = () => {
+  for(i = 0; i < 10; i++){
+    input = window["maxiwordinput" + i];
+    input.value = maxiwordtodaybest[i];
+    input.disabled = true;
+  }
 }
 
 
@@ -648,21 +687,21 @@ input { padding: 10px; border: 2px solid; background: #fff; font-size: 20px; fon
 #wordleresult { font-size: 30px; text-align: center }
 #motigmaresult { font-size: 25px; font-weight: bold; text-align: center; font-family: "Fira Mono", monospace; letter-spacing: 2px; }
 #spellingbeeresult { font-size: 25px; font-weight: bold; text-align: center; }
-#spellingbeetotal { text-align: center; }
+#spellingbeetotal { text-align: center; margin: 0 0 20px; }
 #boggleresult { font-size: 25px; font-weight: bold; text-align: center; }
-#boggletotal { text-align: center; }
+#boggletotal { text-align: center; margin: 0 0 20px; }
 #motigmaresult p { width: 150px; display: inline-block; }
 #boggleboard { font-size: 30px; font-weight: bold; text-align: center; font-family: "Fira Mono", monospace; letter-spacing: 0px; margin: 20px 0; }
 #maxiwordboard { font-size: 30px; font-weight: bold; text-align: center; font-family: "Fira Mono", monospace; letter-spacing: 0px; margin: 20px 0; }
 .maxiwordinputs { font-size: 20px; font-weight: bold; margin: 20px 0; columns: 2; vertical-align: top; }
 .maxiwordinputs input { padding: 5px; width: 160px; }
 .maxiwordinputs p { margin: 0 0 5px; }
-#maxiwordtotal { text-align: center; }
+#maxiwordtotal { text-align: center; margin: 0 0 20px; }
 p { margin: 10px 0 } 
 .green, .orange, .no { display: inline-block; width: 40px; height: 40px; margin: 0 7px 0 0; padding: 5px; line-height: 30px; font-weight: bold; }
 .green { background: #7e7 }
 .orange { background: #fb5 }
 .hidden { display: none }
-#pagemenu a { text-decoration: none; text-align: center; display: block; width: 100%; position: absolute; bottom: 10px; left: 0; font-size: 24px; }
+a[onclick], #pagemenu a { text-decoration: none; text-align: center; display: block; width: 100%; position: absolute; bottom: 10px; left: 0; font-size: 24px; margin: 20px 0 0;}
 :disabled { background: #ddd }
 </style>
