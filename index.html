@@ -92,6 +92,7 @@
     <button id=maxiwordok>OK</button>
   </center>
   <p><div id=maxiwordtotal></div>
+  <p><div id=maxiwordresult></div>
   <a href="#" onclick="showmaxiword(); this.remove(); return false;">show solution</a>
 </div>
 
@@ -154,8 +155,11 @@ subcheckboggle = (word, index, grid) => {
 
 // Choose language / init games
 words = [];
+LANG = 0;
+
 lang = (dico, langId) => {
   words = dico;
+  LANG = langId;
   if(langId == 0){
     pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>SPELLING BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIWORD</button>
     <p>
@@ -181,7 +185,7 @@ lang = (dico, langId) => {
     wordlewords = words.filter(w => w.length === 5 && new Set(w).size === 5);
         
     // Word of the day
-    wordleword = wordlewords[(days * 99) % wordlewords.length];
+    wordleword = wordlewords[(days * 99 + (LANG == 0 ? 1 : 0)) % wordlewords.length];
   
   // Motigma
   
@@ -189,7 +193,7 @@ lang = (dico, langId) => {
     motigmawords = words.filter(w => w.length === 5 && new Set(w).size === 5);
 
     // Word of the day
-    motigmaword = motigmawords[(days * 9999) % motigmawords.length];
+    motigmaword = motigmawords[(days * 9999 + (LANG == 0 ? 1 : 0)) % motigmawords.length];
     
   // Spelling bee
   
@@ -197,7 +201,7 @@ lang = (dico, langId) => {
     spellingbeewords = words.filter(w => w.length === 5 && new Set(w).size === 5);
     
     // Word of the day
-    spellingbeeword = spellingbeewords[(days * 999) % spellingbeewords.length];
+    spellingbeeword = spellingbeewords[(days * 999 + (LANG == 0 ? 1 : 0)) % spellingbeewords.length];
       
     spellingbeeboard.innerHTML = "<h3><span style=color:red>" + spellingbeeword[0] + " </span>" + [...spellingbeeword.slice(1)].sort().join(" ") + "</h3>";
     
@@ -227,7 +231,7 @@ lang = (dico, langId) => {
     // letters of the day
     boggletodayletters = [];
     for(i = 0; i < 16; i++){
-      boggletodayletters.push(boggleletters[(days * i) % boggleletters.length]);
+      boggletodayletters.push(boggleletters[(days * i + (LANG == 0 ? 99 : 0)) % boggleletters.length]);
       boggleletters = boggleletters.replace(boggletodayletters[boggletodayletters.length-1],'');
     }
     
@@ -296,7 +300,7 @@ lang = (dico, langId) => {
     // letters of the day 
     maxiwordtodayletters = [];
     for(i = 0; i < 25; i++){
-      maxiwordtodayletters.push(maxiwordletters[(days * 99 * i) % maxiwordletters.length]);
+      maxiwordtodayletters.push(maxiwordletters[(days * 99 * i  + (LANG == 0 ? 99 : 0)) % maxiwordletters.length]);
       maxiwordletters = maxiwordletters.replace(maxiwordtodayletters[maxiwordtodayletters.length-1],'');
     }
 
@@ -609,10 +613,13 @@ maxiwordok.onclick = () => {
 }
 
 showmaxiword = () => {
+  maxiwordresult.innerHTML = "SOLUTIONS:<br>";
   for(i = 0; i < 10; i++){
-    input = window["maxiwordinput" + i];
-    input.value = maxiwordtodaybest[i];
-    input.disabled = true;
+    maxiwordresult.innerHTML += (maxiwordtodaybest[i].length ? maxiwordtodaybest[i] : "(nothing)");
+    if(i != 9) maxiwordresult.innerHTML += ",";
+    maxiwordresult.innerHTML += " ";
+    if(i == 4) maxiwordresult.innerHTML += "<br>";
+    window["maxiwordinput" + i].disabled = true;
   }
 }
 
@@ -702,6 +709,9 @@ p { margin: 10px 0 }
 .green { background: #7e7 }
 .orange { background: #fb5 }
 .hidden { display: none }
-a[onclick], #pagemenu a { text-decoration: none; text-align: center; display: block; width: 100%; position: absolute; bottom: 10px; left: 0; font-size: 24px; margin: 20px 0 0;}
+a[onclick], #pagemenu a { text-decoration: none; text-align: center; display: block; width: 100%; position: absolute; bottom: 20px; left: 0; font-size: 24px; margin: 20px 0 0;}
+#pagemenu a { position: fixed; }
 :disabled { background: #ddd }
+#maxiwordtotal { display: block; padding: 0 0 20px; margin: 0; }
+#maxiwordresult { font-size: 25px; font-weight: bold; text-align: center; }
 </style>
