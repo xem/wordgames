@@ -637,10 +637,17 @@ onclick = e => {
 }
 
 // Inputs in uppercase / trimmed
-oninput = onkeyup = (e) => {
+oninput = onblur = onkeyup = (e) => {
+  if(!e.srcElement.value) return;
   e.srcElement.value = e.srcElement.value.toUpperCase().trim();
   if(e.key == "Enter" || e.key == "Tab"){
     maxiwordok.click();
+    if(e.srcElement.id.includes("maxiwordinput")){
+      id = e.srcElement.id.match(/input(.)/)[1];
+      if(window["maxiwordinput" + (+id+1)]){
+        window["maxiwordinput" + (+id+1)].focus();
+      }
+    }
   }
 }
 
