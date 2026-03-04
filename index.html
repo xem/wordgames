@@ -6,11 +6,7 @@
 <div id=pagemenu>
   <h1>Word Games</h1>
   <div id=menu>
-    <br>
-    <br>
     <button id=en>ENGLISH</button>
-    <br>
-    <br>
     <button id=fr>FRANÇAIS</button>
     <div id=day class=mono></div>
   </div>
@@ -20,7 +16,6 @@
   <div class=x>×</div>
   <h1>Wordle</h1>
   <h2>You have 6 tries to find today's 5-letter word.<br>Green: correct letter. Orange: misplaced letter.</h2>
-  <br>
   <p>
   <center>
     <input autocomplete="off" id=wordleinput> <button id=wordleok>OK</button></center>
@@ -33,7 +28,6 @@
   <div class=x>×</div>
   <h1>Motigma</h1>
   <h2>Try to find today's 5-letter word.<br>The number shows how many letters are correct.<br>This is inspired by the original game <a href="https://adrien-gueret.github.io/motigma/#splashscreen" target=_blank>Motigma</a>.</h2>
-  <br>
   <p>
   <center>
     <input autocomplete="off" id=motigmainput> <button id=motigmaok>OK</button></center>
@@ -45,7 +39,7 @@
 <div id=pagespellingbee class=hidden>
   <div class=x>×</div>
   <h1>Spelling bee</h1>
-  <h2>Find as many words as possible with these letters.<br>The red letter is mandatory.<br>Words must be at least 3 letters long.</h2>
+  <h2>Find as many words as possible with these letters.<br>Letters can be used many times per word. Red letter is mandatory.<br>Words must be at least 3 letters long.</h2>
   <center>
     <div id=spellingbeeboard></div>
     <p><input autocomplete="off" id=spellingbeeinput> <button id=spellingbeeok>OK</button>
@@ -99,14 +93,27 @@
 
 <script>
 
+window.onbeforeunload = (e) => {
+  if(!newday){
+    e.returnValue = "Reload?";
+    e.preventDefault();
+    return false;
+    if(confirm("Reload?")){
+      location = location;
+    }
+  }
+};
+
 currentday = new Date().toISOString().slice(0, 10);
 
 // Current day
 day.innerHTML = currentday;
 
 // reload page if day changed
+newday = 0;
 setInterval(()=>{
   if(new Date().toISOString().slice(0, 10) != currentday){
+    newday = 1;
     location = location;
   }
 }, 1000);
@@ -590,7 +597,7 @@ boggleok.onclick = () => {
 showboggle = () => {
   boggleinput.value = "";
   boggleinput.disabled = true;
-  boggleresult.innerHTML = bogglewords.join(" ");
+  boggleresult.innerHTML = "<p>Your words:<br>" + boggleresult.innerHTML + "<p>Solutions:<br>" + bogglewords.join(" ");
 }
 
 // Maxiword
@@ -637,15 +644,37 @@ onclick = e => {
 }
 
 // Inputs in uppercase / trimmed
-oninput = onblur = onkeyup = (e) => {
+
+accentsTidy = function(s){
+    var r=s.toLowerCase();
+    r = r.replace(new RegExp(/[àáâãäå]/g),"a");
+    r = r.replace(new RegExp(/æ/g),"ae");
+    r = r.replace(new RegExp(/ç/g),"c");
+    r = r.replace(new RegExp(/[èéêë]/g),"e");
+    r = r.replace(new RegExp(/[ìíîï]/g),"i");
+    r = r.replace(new RegExp(/ñ/g),"n");                
+    r = r.replace(new RegExp(/[òóôõö]/g),"o");
+    r = r.replace(new RegExp(/œ/g),"oe");
+    r = r.replace(new RegExp(/[ùúûü]/g),"u");
+    r = r.replace(new RegExp(/[ýÿ]/g),"y");
+    return r;
+};
+
+oninput = onfocus = onblur = onkeyup = (e) => {
   if(!e.srcElement.value) return;
-  e.srcElement.value = e.srcElement.value.toUpperCase().trim();
+  e.srcElement.value = accentsTidy(e.srcElement.value).toUpperCase().trim();
   if(e.key == "Enter" || e.key == "Tab"){
     maxiwordok.click();
-    if(e.srcElement.id.includes("maxiwordinput")){
+    if(e.srcElement.id.includes("maxiwordinput") && e.srcElement.value != ""){
       id = e.srcElement.id.match(/input(.)/)[1];
-      if(window["maxiwordinput" + (+id+1)]){
+      if(window["maxiwordinput" + (+id+1)] && !window["maxiwordinput" + (+id+1)].disabled){
         window["maxiwordinput" + (+id+1)].focus();
+      }
+      else if(window["maxiwordinput" + (+id+2)] && !window["maxiwordinput" + (+id+2)].disabled){
+        window["maxiwordinput" + (+id+2)].focus();
+      }
+      else if(window["maxiwordinput" + (+id+3)] && !window["maxiwordinput" + (+id+3)].disabled){
+        window["maxiwordinput" + (+id+3)].focus();
       }
     }
   }
@@ -689,34 +718,34 @@ setInterval(()=>{
   box-sizing: border-box;
 }
 html { min-height: 100vh; background: #fff; }
-body { width: 100%; max-width: 490px; margin: auto; background: linear-gradient(#def,#fff); padding: 20px; min-height: 100vh; font: 20px calibri, arial, sans-serif; position: relative; }
-h1 { text-align: center; font-size: 60px; line-height: 60px; color: #037; margin: 0; user-select: none; }
-h2 { text-align: center; font-size: 15px; color: #222; margin: 10px; user-select: none; }
+body { width: 100%; max-width: 490px; margin: auto; background: linear-gradient(#def,#fff); padding: 0 0 30px; min-height: 100vh; font: 20px calibri, arial, sans-serif; position: relative; }
+h1 { text-align: center; font-size: 45px; line-height: 60px; color: #037; margin: 0; user-select: none; }
+h2 { text-align: center; font-size: 15px; color: #222; margin: 5px; user-select: none; }
 h3 { text-align: center; font-size: 34px; color: #222; margin: 10px; user-select: none; }
-button { padding: 10px; border: 2px solid; background: #eee; font-size: 20px; font-weight: bold; }
-input { padding: 10px; border: 2px solid; background: #fff; font-size: 20px; font-weight: bold; width: 200px; }
-#menu button { width: 200px; display: block; margin: 20px auto 0; user-select: none; }
+button { padding: 5px; border: 2px solid; background: #eee; font-size: 18px; font-weight: bold; }
+input { padding: 5px; border: 2px solid; background: #fff; font-size: 18px; font-weight: bold; width: 200px; }
+#menu button { width: 180px; display: block; margin: 20px auto 0; user-select: none; }
 #day { position: absolute; bottom: 0; right: 0; margin: 20px; font-size: 12px; }
-.x { position: absolute; top: 0; right: 0; margin: 0 20px; font-size: 50px; cursor: pointer; user-select: none; }
+.x { position: absolute; top: 0; right: 0; margin: 0 20px; font-size: 40px; cursor: pointer; user-select: none; }
 #wordleresult { font-size: 30px; text-align: center }
 #motigmaresult { font-size: 25px; font-weight: bold; text-align: center; font-family: "Fira Mono", monospace; letter-spacing: 2px; }
 #spellingbeeresult { font-size: 25px; font-weight: bold; text-align: center; }
 #spellingbeetotal { text-align: center; margin: 0 0 20px; }
-#boggleresult { font-size: 25px; font-weight: bold; text-align: center; }
+#boggleresult { font-size: 20px; font-weight: bold; text-align: center; padding: 0 10px; }
 #boggletotal { text-align: center; margin: 0 0 20px; }
 #motigmaresult p { width: 150px; display: inline-block; }
-#boggleboard { font-size: 30px; font-weight: bold; text-align: center; font-family: "Fira Mono", monospace; letter-spacing: 0px; margin: 20px 0; }
-#maxiwordboard { font-size: 30px; font-weight: bold; text-align: center; font-family: "Fira Mono", monospace; letter-spacing: 0px; margin: 20px 0; }
-.maxiwordinputs { font-size: 20px; font-weight: bold; margin: 20px 0; columns: 2; vertical-align: top; }
-.maxiwordinputs input { padding: 5px; width: 160px; }
-.maxiwordinputs p { margin: 0 0 5px; }
+#boggleboard { font-size: 22px; font-weight: bold; text-align: center; font-family: "Fira Mono", monospace; letter-spacing: 0px; margin: 5px 0; }
+#maxiwordboard { font-size: 22px; font-weight: bold; text-align: center; font-family: "Fira Mono", monospace; letter-spacing: 0px; margin: 5px 0; }
+.maxiwordinputs { font-size: 20px; font-weight: bold; margin: 5px 0; columns: 2; vertical-align: top; }
+.maxiwordinputs input { padding: 2px; width: 160px; font-size: 14px; }
+.maxiwordinputs p { margin: 0 0 1px; }
 #maxiwordtotal { text-align: center; margin: 0 0 20px; }
 p { margin: 10px 0 } 
 .green, .orange, .no { display: inline-block; width: 40px; height: 40px; margin: 0 7px 0 0; padding: 5px; line-height: 30px; font-weight: bold; }
 .green { background: #7e7 }
 .orange { background: #fb5 }
 .hidden { display: none }
-a[onclick], #pagemenu a { text-decoration: none; text-align: center; display: block; width: 100%; position: absolute; bottom: 20px; left: 0; font-size: 24px; margin: 20px 0 0;}
+a[onclick], #pagemenu a { text-decoration: none; text-align: center; display: block; width: 100%; position: absolute; bottom: 20px; left: 0; font-size: 20px; margin: 20px 0 0;}
 #pagemenu a { position: fixed; }
 :disabled { background: #ddd }
 #maxiwordtotal { display: block; padding: 0 0 20px; margin: 0; }
