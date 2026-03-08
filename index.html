@@ -90,6 +90,19 @@
   <a href="#" onclick="showmaxiword(); this.remove(); return false;">show solution</a>
 </div>
 
+<div id=pagesubstr class=hidden>
+  <div class=x>×</div>
+  <h1>Substring</h1>
+  <h2>Find words containing the following substring.</h2>
+  <center>
+    <div id=substrboard></div>
+    <p><input autocomplete="off" id=substrinput> <button id=substrok>OK</button>
+  </center>
+  <p><div id=substrresult></div>
+  <p><div id=substrtotal></div>
+  <a href="#" onclick="showsubstr(); this.remove(); return false;">show solution</a>
+</div>
+
 
 <script>
 
@@ -168,12 +181,12 @@ lang = (dico, langId) => {
   words = dico;
   LANG = langId;
   if(langId == 0){
-    pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>SPELLING BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIWORD</button>
+    pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>SPELLING BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIWORD</button> <button id=substrbutton>SUBSTRING</button>
     <p>
     <a id=shareEN href="whatsapp://send?text=I played Word Games" data-action="share/whatsapp/share">Share my scores on WhatsApp</a>`;
   }
   else {
-    pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>LA BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIMOT</button>
+    pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>LA BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIMOT</button> <button id=substrbutton>SUBSTRING</button>
     <p>
     <a id=shareFR href="whatsapp://send?text=j'ai joué à Word Games" data-action="share/whatsapp/share">Share my scores on WhatsApp</a>`;
   }
@@ -183,6 +196,7 @@ lang = (dico, langId) => {
   spellingbee.onclick = () => game(2); 
   boggle.onclick = () => game(3); 
   maxiword.onclick = () => game(4);
+  substrbutton.onclick = () => game(5);
   
   // Choose words/grids of the day
   
@@ -359,6 +373,73 @@ lang = (dico, langId) => {
       maxiwordtotal.innerHTML = "Score: <span id=maxiwordscore>0</span> / " + maxiwordtodaybestscore;
       
     }, 100);
+    
+  // Substring
+  
+    // 5-letter words
+    substrwords = words.filter(w => w.length >= 7);
+    
+    // Word of the day
+    substrword = substrwords[(5678 + days * 99 + (LANG == 0 ? 1 : 0)) % substrwords.length];
+    substrstr7 = substrword.substr(1,7);
+    substrstr6 = substrword.substr(1,6);
+    substrstr5 = substrword.substr(1,5);
+    substrstr4 = substrword.substr(1,4);
+    substrstr3 = substrword.substr(1,3);
+    substrstr = "";
+    
+    substrsolutions = [];
+    substrstr = substrstr7;
+    for(i = 0; i < words.length; i++){
+      if(words[i].includes(substrstr7)){
+        substrsolutions.push(words[i]);
+      }
+    }
+    
+    if(substrsolutions.length < 30){
+      substrsolutions = [];
+      substrstr = substrstr6;
+      for(i = 0; i < words.length; i++){
+        if(words[i].includes(substrstr6)){
+          substrsolutions.push(words[i]);
+        }
+      }
+    }
+    
+    if(substrsolutions.length < 20){
+      substrsolutions = [];
+      substrstr = substrstr5;
+      for(i = 0; i < words.length; i++){
+        if(words[i].includes(substrstr5)){
+          substrsolutions.push(words[i]);
+        }
+      }
+    }
+    
+    if(substrsolutions.length < 10){
+      substrsolutions = [];
+      substrstr = substrstr4;
+      for(i = 0; i < words.length; i++){
+        if(words[i].includes(substrstr4)){
+          substrsolutions.push(words[i]);
+        }
+      }
+    }
+
+    if(substrsolutions.length < 5){
+      substrsolutions = [];
+      substrstr = substrstr3;
+      for(i = 0; i < words.length; i++){
+        if(words[i].includes(substrstr3)){
+          substrsolutions.push(words[i]);
+        }
+      }
+    }
+      
+    substrboard.innerHTML = "<h3>" + substrstr + "</h3>";
+    
+    substrtotal.innerHTML = "Score: <span id=substrscore>0</span> / " + substrsolutions.length;
+  
 }
 
 en.onclick = () => lang(EN, 0);
@@ -396,6 +477,12 @@ game = game => {
   if(game == 4){
     pagemaxiword.classList.remove("hidden");
     maxiwordinput0.focus();
+  }
+  
+  // Substring
+  if(game == 5){
+    pagesubstr.classList.remove("hidden");
+    substrinput.focus();
   }
 }
 
@@ -563,7 +650,7 @@ spellingbeeok.onclick = () => {
 showspellingbee = () => {
   spellingbeeinput.value = "";
   spellingbeeinput.disabled = true;
-  spellingbeeresult.innerHTML = spellingbeesolutions.join(" ");
+  spellingbeeresult.innerHTML = "<p>Your words:<br>" + spellingbeeresult.innerHTML + "<p>Solutions:<br>" + spellingbeesolutions.join(" ");
 }
 
 
@@ -631,6 +718,40 @@ showmaxiword = () => {
 }
 
 
+// Substring 
+  
+// input
+substrinput.onkeyup = key => {
+  if(key.key == "Enter"){
+    substrok.click();
+  }
+}
+
+// OK
+substrwordsfound = [];
+substrok.onclick = () => {
+  currentword = substrinput.value;
+  if(substrsolutions.includes(currentword) && !substrwordsfound.includes(currentword)){
+    
+    // score
+    substrresult.innerHTML += currentword + " ";
+    substrwordsfound.push(currentword);
+    substrscore.innerHTML = substrwordsfound.length;
+  }
+  substrinput.value = "";
+  if(substrwordsfound.length == substrsolutions.length){
+    substrinput.value = "Congrats!";
+    substrinput.disabled = true;
+  }
+}
+
+showsubstr = () => {
+  substrinput.value = "";
+  substrinput.disabled = true;
+  substrresult.innerHTML = "<p>Your words:<br>" + substrresult.innerHTML + "<p>Solutions:<br>" + substrsolutions.join(" ");
+}
+
+
 // Close game
 onclick = e => {
   if(e.target.classList.contains("x")){
@@ -640,6 +761,7 @@ onclick = e => {
     pagespellingbee.classList.add("hidden");
     pageboggle.classList.add("hidden");
     pagemaxiword.classList.add("hidden");
+    pagesubstr.classList.add("hidden");
   }
 }
 
@@ -740,6 +862,7 @@ input { padding: 5px; border: 2px solid; background: #fff; font-size: 18px; font
 .maxiwordinputs input { padding: 2px; width: 160px; font-size: 14px; }
 .maxiwordinputs p { margin: 0 0 1px; }
 #maxiwordtotal { text-align: center; margin: 0 0 20px; }
+#substrtotal { text-align: center; margin: 0 0 20px; }
 p { margin: 10px 0 } 
 .green, .orange, .no { display: inline-block; width: 40px; height: 40px; margin: 0 7px 0 0; padding: 5px; line-height: 30px; font-weight: bold; }
 .green { background: #7e7 }
@@ -750,4 +873,5 @@ a[onclick], #pagemenu a { text-decoration: none; text-align: center; display: bl
 :disabled { background: #ddd }
 #maxiwordtotal { display: block; padding: 0 0 20px; margin: 0; }
 #maxiwordresult { font-size: 25px; font-weight: bold; text-align: center; }
+#substrresult { font-size: 25px; font-weight: bold; text-align: center; padding: 0 10px; }
 </style>
