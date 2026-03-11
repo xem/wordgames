@@ -376,65 +376,104 @@ lang = (dico, langId) => {
     
   // Substring
   
-    // 5-letter words
+    // 5+ letter words
     substrwords = words.filter(w => w.length >= 7);
     
     // Word of the day
-    substrword = substrwords[(5678 + days * 99 + (LANG == 0 ? 1 : 0)) % substrwords.length];
-    substrstr7 = substrword.substr(1,7);
-    substrstr6 = substrword.substr(1,6);
-    substrstr5 = substrword.substr(1,5);
-    substrstr4 = substrword.substr(1,4);
-    substrstr3 = substrword.substr(1,3);
-    substrstr = "";
+    ions = 1;
+    iez = 1;
+    counter = 0;
     
-    substrsolutions = [];
-    substrstr = substrstr7;
-    for(i = 0; i < words.length; i++){
-      if(words[i].includes(substrstr7)){
-        substrsolutions.push(words[i]);
-      }
-    }
-    
-    if(substrsolutions.length < 30){
+    while(ions == 1 && iez == 1){
+      ions = 0;
+      iez = 0;
+      substrword = substrwords[(days * 999 + counter) % substrwords.length];
+      substrstr = substrword.substr(1,5);
+      //console.log(substrstr, substrword);
       substrsolutions = [];
-      substrstr = substrstr6;
       for(i = 0; i < words.length; i++){
-        if(words[i].includes(substrstr6)){
+        if(words[i].includes(substrstr)){
           substrsolutions.push(words[i]);
         }
       }
+      if(substrsolutions.length > 50){
+        ions = 1;
+        iez = 1;
+      }
+      else {
+        for(i = 0; i < substrsolutions.length; i++){
+          //console.log(substrsolutions[i]);
+          if(substrsolutions[i].endsWith("IONS")){
+            ions = 1;
+          }
+          if(substrsolutions[i].endsWith("IEZ")){
+            iez = 1;
+          }
+          if(ions && iez) { break }
+        }
+      }
+      //console.log(substrsolutions.length);
+      counter+=30;
+      //console.log(ions, iez);
     }
-    
-    if(substrsolutions.length < 20){
+     
+    /*
+      substrstr7 = substrword.substr(1,7);
+      substrstr6 = substrword.substr(1,6);
+      substrstr5 = substrword.substr(1,5);
+      substrstr3 = substrword.substr(1,3);
+      substrstr = "";
+      
       substrsolutions = [];
-      substrstr = substrstr5;
+      substrstr = substrstr7;
       for(i = 0; i < words.length; i++){
-        if(words[i].includes(substrstr5)){
+        if(words[i].includes(substrstr7)){
           substrsolutions.push(words[i]);
         }
       }
-    }
-    
-    if(substrsolutions.length < 10){
-      substrsolutions = [];
-      substrstr = substrstr4;
-      for(i = 0; i < words.length; i++){
-        if(words[i].includes(substrstr4)){
-          substrsolutions.push(words[i]);
+      
+      if(substrsolutions.length < 30){
+        substrsolutions = [];
+        substrstr = substrstr6;
+        for(i = 0; i < words.length; i++){
+          if(words[i].includes(substrstr6)){
+            substrsolutions.push(words[i]);
+          }
         }
       }
-    }
+      
+      if(substrsolutions.length < 20){
+        substrsolutions = [];
+        substrstr = substrstr5;
+        for(i = 0; i < words.length; i++){
+          if(words[i].includes(substrstr5)){
+            substrsolutions.push(words[i]);
+          }
+        }
+      }
+      
+      if(substrsolutions.length < 10){
+        substrsolutions = [];
+        substrstr = substrstr4;
+        for(i = 0; i < words.length; i++){
+          if(words[i].includes(substrstr4)){
+            substrsolutions.push(words[i]);
+          }
+        }
+      }
 
-    if(substrsolutions.length < 5){
-      substrsolutions = [];
-      substrstr = substrstr3;
-      for(i = 0; i < words.length; i++){
-        if(words[i].includes(substrstr3)){
-          substrsolutions.push(words[i]);
+      if(substrsolutions.length < 5){
+        substrsolutions = [];
+        substrstr = substrstr3;
+        for(i = 0; i < words.length; i++){
+          if(words[i].includes(substrstr3)){
+            substrsolutions.push(words[i]);
+          }
         }
       }
-    }
+    }*/
+    
+
       
     substrboard.innerHTML = "<h3>" + substrstr + "</h3>";
     
