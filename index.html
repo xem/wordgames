@@ -93,7 +93,7 @@
 <div id=pagesubstr class=hidden>
   <div class=x>×</div>
   <h1>Substring</h1>
-  <h2>Find words containing the following substring.</h2>
+  <h2>Find words containing the following three letters.</h2>
   <center>
     <div id=substrboard></div>
     <p><input autocomplete="off" id=substrinput> <button id=substrok>OK</button>
@@ -181,18 +181,18 @@ lang = (dico, langId) => {
   words = dico;
   LANG = langId;
   if(langId == 0){
-    pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>SPELLING BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIWORD</button> <button id=substrbutton>SUBSTRING</button>
+    pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <!--button id=motigma>MOTIGMA</button--> <button id=spellingbee>SPELLING BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIWORD</button> <button id=substrbutton>SUBSTRING</button>
     <p>
     <a id=shareEN href="whatsapp://send?text=I played Word Games" data-action="share/whatsapp/share">Share my scores on WhatsApp</a>`;
   }
   else {
-    pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <button id=motigma>MOTIGMA</button> <button id=spellingbee>LA BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIMOT</button> <button id=substrbutton>SUBSTRING</button>
+    pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <!--button id=motigma>MOTIGMA</button--> <button id=spellingbee>SPELLING BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIMOT</button> <button id=substrbutton>SUBSTRING</button>
     <p>
     <a id=shareFR href="whatsapp://send?text=j'ai joué à Word Games" data-action="share/whatsapp/share">Share my scores on WhatsApp</a>`;
   }
   
   wordle.onclick = () => game(0);
-  motigma.onclick = () => game(1);
+  //motigma.onclick = () => game(1);
   spellingbee.onclick = () => game(2); 
   boggle.onclick = () => game(3); 
   maxiword.onclick = () => game(4);
@@ -376,106 +376,24 @@ lang = (dico, langId) => {
     
   // Substring
   
-    // 5+ letter words
-    substrwords = words.filter(w => w.length >= 7);
+    // 5 letter words
+    substrwords = words.filter(w => w.length == 5);
     
     // Word of the day
-    ions = 1;
-    iez = 1;
+    substrsolutions = [];
     counter = 0;
-    
-    while(ions == 1 && iez == 1){
-      ions = 0;
-      iez = 0;
-      substrword = substrwords[(days * 999 + counter) % substrwords.length];
-      substrstr = substrword.substr(1,5);
-      //console.log(substrstr, substrword);
+    while(substrsolutions.length <= 10 || substrsolutions.length > 100){
       substrsolutions = [];
-      for(i = 0; i < words.length; i++){
-        if(words[i].includes(substrstr)){
-          substrsolutions.push(words[i]);
+      substrword = substrwords[(days * 999 + 12345 + counter) % substrwords.length];
+      for(i = 0; i < substrwords.length; i++){
+        if(substrwords[i][1] == substrword[1] && substrwords[i][2] == substrword[2] && substrwords[i][3] == substrword[3]){
+          substrsolutions.push(substrwords[i]);
         }
       }
-      if(substrsolutions.length > 50){
-        ions = 1;
-        iez = 1;
-      }
-      else {
-        for(i = 0; i < substrsolutions.length; i++){
-          //console.log(substrsolutions[i]);
-          if(substrsolutions[i].endsWith("IONS")){
-            ions = 1;
-          }
-          if(substrsolutions[i].endsWith("IEZ")){
-            iez = 1;
-          }
-          if(ions && iez) { break }
-        }
-      }
-      //console.log(substrsolutions.length);
-      counter+=30;
-      //console.log(ions, iez);
+      counter++;
     }
-     
-    /*
-      substrstr7 = substrword.substr(1,7);
-      substrstr6 = substrword.substr(1,6);
-      substrstr5 = substrword.substr(1,5);
-      substrstr3 = substrword.substr(1,3);
-      substrstr = "";
       
-      substrsolutions = [];
-      substrstr = substrstr7;
-      for(i = 0; i < words.length; i++){
-        if(words[i].includes(substrstr7)){
-          substrsolutions.push(words[i]);
-        }
-      }
-      
-      if(substrsolutions.length < 30){
-        substrsolutions = [];
-        substrstr = substrstr6;
-        for(i = 0; i < words.length; i++){
-          if(words[i].includes(substrstr6)){
-            substrsolutions.push(words[i]);
-          }
-        }
-      }
-      
-      if(substrsolutions.length < 20){
-        substrsolutions = [];
-        substrstr = substrstr5;
-        for(i = 0; i < words.length; i++){
-          if(words[i].includes(substrstr5)){
-            substrsolutions.push(words[i]);
-          }
-        }
-      }
-      
-      if(substrsolutions.length < 10){
-        substrsolutions = [];
-        substrstr = substrstr4;
-        for(i = 0; i < words.length; i++){
-          if(words[i].includes(substrstr4)){
-            substrsolutions.push(words[i]);
-          }
-        }
-      }
-
-      if(substrsolutions.length < 5){
-        substrsolutions = [];
-        substrstr = substrstr3;
-        for(i = 0; i < words.length; i++){
-          if(words[i].includes(substrstr3)){
-            substrsolutions.push(words[i]);
-          }
-        }
-      }
-    }*/
-    
-
-      
-    substrboard.innerHTML = "<h3>" + substrstr + "</h3>";
+    substrboard.innerHTML = "<h3>_ " + substrword.substr(1,3) + " _</h3>";
     
     substrtotal.innerHTML = "Score: <span id=substrscore>0</span> / " + substrsolutions.length;
   
@@ -851,6 +769,7 @@ setInterval(()=>{
     if(spellingbeewordsfound.length) shareEN.href += "Spelling Bee: " + spellingbeewordsfound.length + "/" + spellingbeesolutions.length + " words%0A";
     if(bogglewordsfound.length) shareEN.href += "Boggle: " + bogglewordsfound.length + "/" + bogglewords.length + " words%0A";
     if(maxiwordtodayscore) shareEN.href += "Maxiword: " + maxiwordtodayscore + "/" + maxiwordtodaybestscore + " points";
+    if(substrwordsfound.length) shareEN.href += "Substring: " + substrwordsfound.length + "/" + substrsolutions.length + " points";
   }
   if(window.shareFR){
     shareFR.href="whatsapp://send?text=J'ai joué à Word Games en français!%0A";
@@ -859,6 +778,7 @@ setInterval(()=>{
     if(spellingbeewordsfound.length) shareFR.href += "Spelling Bee: " + spellingbeewordsfound.length + "/" + spellingbeesolutions.length + " mots%0A";
     if(bogglewordsfound.length) shareFR.href += "Boggle: " + bogglewordsfound.length + "/" + bogglewords.length + " mots%0A";
     if(maxiwordtodayscore) shareFR.href += "Maxiword: " + maxiwordtodayscore + "/" + maxiwordtodaybestscore + " points";
+    if(substrwordsfound.length) shareFR.href += "Substring: " + substrwordsfound.length + "/" + substrsolutions.length + " points";
   }
 }, 1000);
 
@@ -878,8 +798,12 @@ setInterval(()=>{
 	border: 0;
   box-sizing: border-box;
 }
+@keyframes hue {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
 html { min-height: 100vh; background: #fff; }
-body { width: 100%; max-width: 490px; margin: auto; background: linear-gradient(#def,#fff); padding: 0 0 30px; min-height: 100vh; font: 20px calibri, arial, sans-serif; position: relative; }
+body { width: 100%; max-width: 490px; margin: auto; background: linear-gradient(#def,#fff); padding: 0 0 30px; min-height: 100vh; font: 20px calibri, arial, sans-serif; position: relative; animation: hue 120s infinite; }
 h1 { text-align: center; font-size: 45px; line-height: 60px; color: #037; margin: 0; user-select: none; }
 h2 { text-align: center; font-size: 15px; color: #222; margin: 5px; user-select: none; }
 h3 { text-align: center; font-size: 34px; color: #222; margin: 10px; user-select: none; }
@@ -913,4 +837,5 @@ a[onclick], #pagemenu a { text-decoration: none; text-align: center; display: bl
 #maxiwordtotal { display: block; padding: 0 0 20px; margin: 0; }
 #maxiwordresult { font-size: 25px; font-weight: bold; text-align: center; }
 #substrresult { font-size: 25px; font-weight: bold; text-align: center; padding: 0 10px; }
+button { cursor: pointer }
 </style>
