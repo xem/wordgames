@@ -72,13 +72,13 @@
     </td>
     <td>
     <div class=maxiwordinputs>
-    <p>Horizontal
+    <p>Lines
     <p><input autocomplete="off" id=maxiwordinput0 placeholder="line 1">
     <p><input autocomplete="off" id=maxiwordinput1 placeholder="line 2">
     <p><input autocomplete="off" id=maxiwordinput2 placeholder="line 3">
     <p><input autocomplete="off" id=maxiwordinput3 placeholder="line 4">
     <p><input autocomplete="off" id=maxiwordinput4 placeholder="line 5">
-    <p>Vertical
+    <p>Columns
     <p><input autocomplete="off" id=maxiwordinput5 placeholder="column 1">
     <p><input autocomplete="off" id=maxiwordinput6 placeholder="column 2">
     <p><input autocomplete="off" id=maxiwordinput7 placeholder="column 3">
@@ -365,7 +365,7 @@ lang = (dico, langId) => {
     }
 
     // board
-    maxiwordboard.innerHTML =  maxiwordtodayletters.join(" ").replace(/(. . . . .)/g,"$1<br>");
+    maxiwordboard.innerHTML =  "<br>" + maxiwordtodayletters.join(" ").replace(/(. . . . .) ?/g,"$1<br>").replaceAll(" ", "&nbsp;");
     
     maxiwordinputs = 0;
       
@@ -903,5 +903,5 @@ a[onclick], #pagemenu a { text-decoration: none; text-align: center; display: bl
 #substrresult { font-size: 25px; font-weight: bold; text-align: center; padding: 0 10px; }
 button { cursor: pointer }
 #maxicolumns { columns: 2 }
-td { padding: 15px }
+td { padding: 10px }
 </style>
