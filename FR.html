@@ -1,27 +1,31 @@
 ﻿<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<script src=EN.js></script>
 <script src=FR.js></script>
 
 <div id=pagemenu>
-  <h1>Word Games</h1>
+  <h1>JEUX DE MOTS</h1>
   <div id=menu>
-    <button id=en>ENGLISH</button>
-    <button id=fr>FRANÇAIS</button>
-    <div id=day class=mono></div>
+    <p><button id=wordle>WORDLE</button>
+    <!--button id=motigma>MOTIGMA</button-->
+    <button id=spellingbee>SPELLING BEE</button>
+    <button id=boggle>BOGGLE</button>
+    <button id=maxiword>MAXIMOT</button>
+    <button id=substrbutton>SUBSTRING</button>
+    <p>
+    <a id=shareFR onclick=share()>Partager mes scores</a>
   </div>
 </div>
 
 <div id=pagewordle class=hidden>
   <div class=x>×</div>
   <h1>Wordle</h1>
-  <h2>You have 6 tries to find today's 5-letter word.<br>Green: correct letter. Orange: misplaced letter.</h2>
+  <h2>Vous avez 6 essais pour trouver un mot de 5 lettres.<br>Vert: correct. Orange: lettre mal placée.</h2>
   <p>
   <center>
     <input autocomplete="off" id=wordleinput> <button id=wordleok>OK</button></center>
   <br>
   <p><div id=wordleresult></div>
-  <a href="#" onclick="showwordle(); this.remove(); return false;">show solution</a>
+  <a href="#" onclick="showwordle(); this.remove(); return false;">Voir la solution</a>
 </div>
 
 <div id=pagemotigma class=hidden>
@@ -33,57 +37,57 @@
     <input autocomplete="off" id=motigmainput> <button id=motigmaok>OK</button></center>
   <br>
   <p><div id=motigmaresult></div>
-  <a href="#" onclick="showmotigma(); this.remove(); return false;">show solution</a>
+  <a href="#" onclick="showmotigma(); this.remove(); return false;">Voir la solution</a>
 </div>
 
 <div id=pagespellingbee class=hidden>
   <div class=x>×</div>
   <h1>Spelling bee</h1>
-  <h2>Find as many words as possible with these letters.<br>Letters can be used many times per word. Red letter is mandatory.<br>Words must be at least 3 letters long.</h2>
+  <h2>Trouvez tous les mots utilisant ces lettres.<br>Chaque lettre peut être utilisée zéro ou  plusieurs fois.<br>La lettre rouge est obligatoire.<br>Les mots doivent faire 3 lettres minimum.</h2>
   <center>
     <div id=spellingbeeboard></div>
     <p><input autocomplete="off" id=spellingbeeinput> <button id=spellingbeeok>OK</button>
   </center>
   <p><div id=spellingbeeresult></div>
   <p><div id=spellingbeetotal></div>
-  <a href="#" onclick="showspellingbee(); this.remove(); return false;">show solution</a>
+  <a href="#" onclick="showspellingbee(); this.remove(); return false;">Voir la solution</a>
 </div>
 
 <div id=pageboggle class=hidden>
   <div class=x>×</div>
   <h1>Boggle</h1>
-  <h2>Find words made from neighbour letters.<br>Each letter can only be used once per word.<br>Words must be at least 3 letters long.</h2>
+  <h2>Trouvez tous les mots formés avec des lettres adjacentes.<br>Chaque lettre peut être utilisée une seule fois par mot.<br>Les mots doivent faire 3 lettres minimum.</h2>
   <center>
     <div id=boggleboard></div>
     <p><input autocomplete="off" id=boggleinput> <button id=boggleok>OK</button>
   </center>
   <p><div id=boggleresult></div>
   <p><div id=boggletotal></div>
-  <a href="#" onclick="showboggle(); this.remove(); return false;">show solution</a>
+  <a href="#" onclick="showboggle(); this.remove(); return false;">Voir la solution</a>
 </div>
 
 <div id=pagemaxiword class=hidden>
   <div class=x>×</div>
   <h1>Maxiword</h1>
-  <h2>Find the longest word in each row and column.<br>The letters can't be use multiple times per word.<br>Your score is the total length of your words.</h2>
+  <h2>Trouvez le plus long mot dans chaque ligne et chaque colonne.<br>Chaque lettre est utilisée au maximum une fois par mot.<br>Votre score est égal à la longueur de tous vos mots.</h2>
   <center>
     <table><tr><td>
     <div id=maxiwordboard></div>
     </td>
     <td>
     <div class=maxiwordinputs>
-    <p>Lines
-    <p><input autocomplete="off" id=maxiwordinput0 placeholder="line 1">
-    <p><input autocomplete="off" id=maxiwordinput1 placeholder="line 2">
-    <p><input autocomplete="off" id=maxiwordinput2 placeholder="line 3">
-    <p><input autocomplete="off" id=maxiwordinput3 placeholder="line 4">
-    <p><input autocomplete="off" id=maxiwordinput4 placeholder="line 5">
-    <p>Columns
-    <p><input autocomplete="off" id=maxiwordinput5 placeholder="column 1">
-    <p><input autocomplete="off" id=maxiwordinput6 placeholder="column 2">
-    <p><input autocomplete="off" id=maxiwordinput7 placeholder="column 3">
-    <p><input autocomplete="off" id=maxiwordinput8 placeholder="column 4">
-    <p><input autocomplete="off" id=maxiwordinput9 placeholder="column 5">
+    <p>Lignes
+    <p><input autocomplete="off" id=maxiwordinput0 placeholder="ligne 1">
+    <p><input autocomplete="off" id=maxiwordinput1 placeholder="ligne 2">
+    <p><input autocomplete="off" id=maxiwordinput2 placeholder="ligne 3">
+    <p><input autocomplete="off" id=maxiwordinput3 placeholder="ligne 4">
+    <p><input autocomplete="off" id=maxiwordinput4 placeholder="ligne 5">
+    <p>Colonnes
+    <p><input autocomplete="off" id=maxiwordinput5 placeholder="colonne 1">
+    <p><input autocomplete="off" id=maxiwordinput6 placeholder="colonne 2">
+    <p><input autocomplete="off" id=maxiwordinput7 placeholder="colonne 3">
+    <p><input autocomplete="off" id=maxiwordinput8 placeholder="colonne 4">
+    <p><input autocomplete="off" id=maxiwordinput9 placeholder="colonne 5">
     </div>
     </table>
     <p>
@@ -91,29 +95,40 @@
   </center>
   <p><div id=maxiwordtotal></div>
   <p><div id=maxiwordresult></div>
-  <a href="#" onclick="showmaxiword(); this.remove(); return false;">show solution</a>
+  <a href="#" onclick="showmaxiword(); this.remove(); return false;">Voir la solution</a>
 </div>
 
 <div id=pagesubstr class=hidden>
   <div class=x>×</div>
   <h1>Substring</h1>
-  <h2>Find words containing the following three letters.</h2>
+  <h2>Trouvez des mots de 5 lettres contenant ces 3 lettres au milieu.</h2>
   <center>
     <div id=substrboard></div>
     <p><input autocomplete="off" id=substrinput> <button id=substrok>OK</button>
   </center>
   <p><div id=substrresult></div>
   <p><div id=substrtotal></div>
-  <a href="#" onclick="showsubstr(); this.remove(); return false;">show solution</a>
+  <a href="#" onclick="showsubstr(); this.remove(); return false;">Voir la solution</a>
 </div>
 
 
 <script>
 
+window.onbeforeunload = (e) => {
+  if(!newday){
+    e.returnValue = "Reload?";
+    e.preventDefault();
+    return false;
+    if(confirm("Reload?")){
+      location = location;
+    }
+  }
+};
+
 currentday = new Date().toISOString().slice(0, 10);
 
 // Current day
-day.innerHTML = currentday;
+//day.innerHTML = currentday;
 
 // reload page if day changed
 newday = 0;
@@ -168,45 +183,32 @@ subcheckboggle = (word, index, grid) => {
 
 // Choose language / init games
 words = [];
-LANG = 0;
+LANG = 1;
 
-lang = (dico, langId) => {
-  words = dico;
-  LANG = langId;
-  if(langId == 0){
-    location = "EN.html";
-    
-    /*pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <!--button id=motigma>MOTIGMA</button--> <button id=spellingbee>SPELLING BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIWORD</button> <button id=substrbutton>SUBSTRING</button>
-    <p>
-    <a id=shareEN onclick=share()>Share my scores</a>`;*/
-  }
-  else {
-    location = "FR.html";
-    
-    /* pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <!--button id=motigma>MOTIGMA</button--> <button id=spellingbee>SPELLING BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIMOT</button> <button id=substrbutton>SUBSTRING</button>
-    <p>
-    <a id=shareFR onclick=share()>Share my scores</a>`;*/
-  }
+
   
-  wordle.onclick = () => game(0);
-  //motigma.onclick = () => game(1);
-  spellingbee.onclick = () => game(2); 
-  boggle.onclick = () => game(3); 
-  maxiword.onclick = () => game(4);
-  substrbutton.onclick = () => game(5);
+wordle.onclick = () => game(0);
+//motigma.onclick = () => game(1);
+spellingbee.onclick = () => game(2); 
+boggle.onclick = () => game(3); 
+maxiword.onclick = () => game(4);
+substrbutton.onclick = () => game(5);
+
+onload = () => {
+  words = FR;
   
   // Choose words/grids of the day
-  
+
   // Wordle
-  
+
     // 5-letter words with no repeated letters
     wordlewords = words.filter(w => w.length === 5 && new Set(w).size === 5);
         
     // Word of the day
     wordleword = wordlewords[(days * 99 + (LANG == 0 ? 1 : 0)) % wordlewords.length];
-  
+
   // Motigma
-  
+
     // 5-letter words with no repeated letters
     motigmawords = words.filter(w => w.length === 5 && new Set(w).size === 5);
 
@@ -214,7 +216,7 @@ lang = (dico, langId) => {
     motigmaword = motigmawords[(days * 9999 + (LANG == 0 ? 1 : 0)) % motigmawords.length];
     
   // Spelling bee
-  
+
     // 5-letter words
     spellingbeewords = words.filter(w => w.length === 5 && new Set(w).size === 5);
     
@@ -240,9 +242,9 @@ lang = (dico, langId) => {
     }
     spellingbeetotal.innerHTML = "Score: <span id=spellingbeescore>0</span> / " + spellingbeesolutions.length;
   }, 100);
-  
+
   // Boggle
-  
+
     // all letters
     boggleletters = "AAEEGNAOOTTWCIMOTUDISTTYEIOSSTDELRVYEHRTVWACHOPSHIMNUQEEINSUAFFKPSHLNNRZEEGHNWDEILRXELRTTYABBJOO";
     
@@ -309,9 +311,9 @@ lang = (dico, langId) => {
       }
     }
     boggletotal.innerHTML = "Score: <span id=bogglescore>0</span> / " + bogglewords.length;
-  
+
   // Maxiword
-  
+
 
     
     maxiwordvowels = 0;
@@ -388,7 +390,7 @@ lang = (dico, langId) => {
     }, 100);
     
   // Substring
-  
+
     // 5 letter words
     substrwords = words.filter(w => w.length == 5);
     
@@ -409,14 +411,10 @@ lang = (dico, langId) => {
     substrboard.innerHTML = "<h3>_ " + substrword.substr(1,3) + " _</h3>";
     
     substrtotal.innerHTML = "Score: <span id=substrscore>0</span> / " + substrsolutions.length;
-  
 }
 
-en.onclick = () => lang(EN, 0);
-fr.onclick = () => lang(FR, 1);
-
 // Choose game
-game = game => {
+var game = game => {
   pagemenu.classList.add("hidden");
   
   // Wordle
@@ -874,7 +872,7 @@ input { padding: 5px; border: 2px solid; background: #fff; font-size: 18px; font
 #boggleboard { font-size: 22px; font-weight: bold; text-align: center; font-family: "Fira Mono", monospace; letter-spacing: 0px; margin: 5px 0; }
 #maxiwordboard { font-size: 22px; font-weight: bold; text-align: center; font-family: "Fira Mono", monospace; letter-spacing: 0px; margin: 5px 0; }
 .maxiwordinputs { font-size: 20px; font-weight: bold; margin: 5px 0; columns: 2; vertical-align: top; }
-.maxiwordinputs input { padding: 2px; width: 70px; font-size: 14px; }
+.maxiwordinputs input { padding: 2px; width: 75px; font-size: 14px; }
 .maxiwordinputs p { margin: 0 0 1px; }
 #maxiwordtotal { text-align: center; margin: 0 0 20px; }
 #substrtotal { text-align: center; margin: 0 0 20px; }

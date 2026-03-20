@@ -1,14 +1,18 @@
 ﻿<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <script src=EN.js></script>
-<script src=FR.js></script>
 
 <div id=pagemenu>
-  <h1>Word Games</h1>
+  <h1>WORD GAMES</h1>
   <div id=menu>
-    <button id=en>ENGLISH</button>
-    <button id=fr>FRANÇAIS</button>
-    <div id=day class=mono></div>
+    <p><button id=wordle>WORDLE</button>
+    <!--button id=motigma>MOTIGMA</button-->
+    <button id=spellingbee>SPELLING BEE</button>
+    <button id=boggle>BOGGLE</button>
+    <button id=maxiword>MAXIMOT</button>
+    <button id=substrbutton>SUBSTRING</button>
+    <p>
+    <a id=shareFR onclick=share()>Partager mes scores</a>
   </div>
 </div>
 
@@ -110,10 +114,21 @@
 
 <script>
 
+window.onbeforeunload = (e) => {
+  if(!newday){
+    e.returnValue = "Reload?";
+    e.preventDefault();
+    return false;
+    if(confirm("Reload?")){
+      location = location;
+    }
+  }
+};
+
 currentday = new Date().toISOString().slice(0, 10);
 
 // Current day
-day.innerHTML = currentday;
+//day.innerHTML = currentday;
 
 // reload page if day changed
 newday = 0;
@@ -170,43 +185,30 @@ subcheckboggle = (word, index, grid) => {
 words = [];
 LANG = 0;
 
-lang = (dico, langId) => {
-  words = dico;
-  LANG = langId;
-  if(langId == 0){
-    location = "EN.html";
-    
-    /*pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <!--button id=motigma>MOTIGMA</button--> <button id=spellingbee>SPELLING BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIWORD</button> <button id=substrbutton>SUBSTRING</button>
-    <p>
-    <a id=shareEN onclick=share()>Share my scores</a>`;*/
-  }
-  else {
-    location = "FR.html";
-    
-    /* pagemenu.innerHTML = `<h1>Word Games</h1><div id=menu><p><button id=wordle>WORDLE</button> <!--button id=motigma>MOTIGMA</button--> <button id=spellingbee>SPELLING BEE</button> <button id=boggle>BOGGLE</button> <button id=maxiword>MAXIMOT</button> <button id=substrbutton>SUBSTRING</button>
-    <p>
-    <a id=shareFR onclick=share()>Share my scores</a>`;*/
-  }
+
   
-  wordle.onclick = () => game(0);
-  //motigma.onclick = () => game(1);
-  spellingbee.onclick = () => game(2); 
-  boggle.onclick = () => game(3); 
-  maxiword.onclick = () => game(4);
-  substrbutton.onclick = () => game(5);
+wordle.onclick = () => game(0);
+//motigma.onclick = () => game(1);
+spellingbee.onclick = () => game(2); 
+boggle.onclick = () => game(3); 
+maxiword.onclick = () => game(4);
+substrbutton.onclick = () => game(5);
+
+onload = () => {
+  words = EN;
   
   // Choose words/grids of the day
-  
+
   // Wordle
-  
+
     // 5-letter words with no repeated letters
     wordlewords = words.filter(w => w.length === 5 && new Set(w).size === 5);
         
     // Word of the day
     wordleword = wordlewords[(days * 99 + (LANG == 0 ? 1 : 0)) % wordlewords.length];
-  
+
   // Motigma
-  
+
     // 5-letter words with no repeated letters
     motigmawords = words.filter(w => w.length === 5 && new Set(w).size === 5);
 
@@ -214,7 +216,7 @@ lang = (dico, langId) => {
     motigmaword = motigmawords[(days * 9999 + (LANG == 0 ? 1 : 0)) % motigmawords.length];
     
   // Spelling bee
-  
+
     // 5-letter words
     spellingbeewords = words.filter(w => w.length === 5 && new Set(w).size === 5);
     
@@ -240,9 +242,9 @@ lang = (dico, langId) => {
     }
     spellingbeetotal.innerHTML = "Score: <span id=spellingbeescore>0</span> / " + spellingbeesolutions.length;
   }, 100);
-  
+
   // Boggle
-  
+
     // all letters
     boggleletters = "AAEEGNAOOTTWCIMOTUDISTTYEIOSSTDELRVYEHRTVWACHOPSHIMNUQEEINSUAFFKPSHLNNRZEEGHNWDEILRXELRTTYABBJOO";
     
@@ -309,9 +311,9 @@ lang = (dico, langId) => {
       }
     }
     boggletotal.innerHTML = "Score: <span id=bogglescore>0</span> / " + bogglewords.length;
-  
+
   // Maxiword
-  
+
 
     
     maxiwordvowels = 0;
@@ -388,7 +390,7 @@ lang = (dico, langId) => {
     }, 100);
     
   // Substring
-  
+
     // 5 letter words
     substrwords = words.filter(w => w.length == 5);
     
@@ -409,14 +411,10 @@ lang = (dico, langId) => {
     substrboard.innerHTML = "<h3>_ " + substrword.substr(1,3) + " _</h3>";
     
     substrtotal.innerHTML = "Score: <span id=substrscore>0</span> / " + substrsolutions.length;
-  
 }
 
-en.onclick = () => lang(EN, 0);
-fr.onclick = () => lang(FR, 1);
-
 // Choose game
-game = game => {
+var game = game => {
   pagemenu.classList.add("hidden");
   
   // Wordle
@@ -874,7 +872,7 @@ input { padding: 5px; border: 2px solid; background: #fff; font-size: 18px; font
 #boggleboard { font-size: 22px; font-weight: bold; text-align: center; font-family: "Fira Mono", monospace; letter-spacing: 0px; margin: 5px 0; }
 #maxiwordboard { font-size: 22px; font-weight: bold; text-align: center; font-family: "Fira Mono", monospace; letter-spacing: 0px; margin: 5px 0; }
 .maxiwordinputs { font-size: 20px; font-weight: bold; margin: 5px 0; columns: 2; vertical-align: top; }
-.maxiwordinputs input { padding: 2px; width: 70px; font-size: 14px; }
+.maxiwordinputs input { padding: 2px; width: 75px; font-size: 14px; }
 .maxiwordinputs p { margin: 0 0 1px; }
 #maxiwordtotal { text-align: center; margin: 0 0 20px; }
 #substrtotal { text-align: center; margin: 0 0 20px; }
