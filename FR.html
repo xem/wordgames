@@ -2,6 +2,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <script src=FR.js></script>
 
+<div id=pagescore class=hidden>
+  <div class=x>×</div>
+  <div id=pagescoretxt></div>
+  <br><button id=scorecopy>copier</button>
+  <br><br><button id=scorewhatsapp>whatsapp</button>
+</div>
+
 <div id=pagemenu>
   <h1>JEUX DE MOTS</h1>
   <div id=menu>
@@ -69,7 +76,7 @@
 <div id=pagemaxiword class=hidden>
   <div class=x>×</div>
   <h1>Maxiword</h1>
-  <h2>Trouvez le plus long mot dans chaque ligne et chaque colonne.<br>Chaque lettre est utilisée au maximum une fois par mot.<br>Votre score est égal à la longueur de tous vos mots.</h2>
+  <h2>Trouvez le plus long mot dans chaque ligne et colonne.<br>Chaque lettre est utilisée au maximum une fois par mot.<br>Votre score est égal à la longueur de tous vos mots.</h2>
   <center>
     <table><tr><td>
     <div id=maxiwordboard></div>
@@ -101,7 +108,7 @@
 <div id=pagesubstr class=hidden>
   <div class=x>×</div>
   <h1>Substring</h1>
-  <h2>Trouvez des mots de 5 lettres contenant ces 3 lettres au milieu.</h2>
+  <h2>Trouvez des mots de 5 lettres contenant ces 3 lettres.</h2>
   <center>
     <div id=substrboard></div>
     <p><input autocomplete="off" id=substrinput> <button id=substrok>OK</button>
@@ -604,7 +611,7 @@ spellingbeeok.onclick = () => {
   if(spellingbeesolutions.includes(currentword) && !spellingbeewordsfound.includes(currentword)){
     
     // score
-    spellingbeeresult.innerHTML += currentword + " ";
+    spellingbeeresult.innerHTML = currentword + " " + spellingbeeresult.innerHTML;
     spellingbeewordsfound.push(currentword);
     spellingbeescore.innerHTML = spellingbeewordsfound.length;
   }
@@ -646,7 +653,7 @@ boggleok.onclick = () => {
   if(bogglewords.includes(currentword) && !bogglewordsfound.includes(currentword)){
     
     // score
-    boggleresult.innerHTML += currentword + " ";
+    boggleresult.innerHTML = currentword + " " + boggleresult.innerHTML;
     bogglewordsfound.push(currentword);
     bogglescore.innerHTML = bogglewordsfound.length;
   }
@@ -719,7 +726,7 @@ substrok.onclick = () => {
   if(substrsolutions.includes(currentword) && !substrwordsfound.includes(currentword)){
     
     // score
-    substrresult.innerHTML += currentword + " ";
+    substrresult.innerHTML = currentword + " " + substrresult.innerHTML;
     substrwordsfound.push(currentword);
     substrscore.innerHTML = substrwordsfound.length;
   }
@@ -754,6 +761,7 @@ onclick = e => {
     pageboggle.classList.add("hidden");
     pagemaxiword.classList.add("hidden");
     pagesubstr.classList.add("hidden");
+    pagescore.classList.add("hidden");
   }
 }
 
@@ -799,25 +807,37 @@ share = () => {
   scoresEN = "";
   scoresFR = "";
   if(window.shareEN){
-    scoresEN = "I played Word Games in english!\r\n";
-    if(wordlewin) scoresEN += "Wordle: " + wordlewin + " tries\r\n";
-    if(motigmawin) scoresEN += "Motigma: " + motigmawin + " tries\r\n";
-    if(spellingbeewordsfound.length) scoresEN += "Spelling Bee: " + spellingbeewordsfound.length + "/" + spellingbeesolutions.length + " words\r\n";
-    if(bogglewordsfound.length) scoresEN += "Boggle: " + bogglewordsfound.length + "/" + bogglewords.length + " words\r\n";
-    if(maxiwordtodayscore) scoresEN += "Maxiword: " + maxiwordtodayscore + "/" + maxiwordtodaybestscore + " points\r\n";
+    scoresEN = "I played Word Games in english!<br>";
+    if(wordlewin) scoresEN += "Wordle: " + wordlewin + " tries<br>";
+    if(motigmawin) scoresEN += "Motigma: " + motigmawin + " tries<br>";
+    if(spellingbeewordsfound.length) scoresEN += "Spelling Bee: " + spellingbeewordsfound.length + "/" + spellingbeesolutions.length + " words<br>";
+    if(bogglewordsfound.length) scoresEN += "Boggle: " + bogglewordsfound.length + "/" + bogglewords.length + " words<br>";
+    if(maxiwordtodayscore) scoresEN += "Maxiword: " + maxiwordtodayscore + "/" + maxiwordtodaybestscore + " points<br>";
     if(substrwordsfound.length) scoresEN += "Substring: " + substrwordsfound.length + "/" + substrsolutions.length + " points";
-    prompt("Score", scoresEN);
+    pagescore.classList.remove("hidden");
+    pagescoretxt.innerHTML = scoresEN;
+    pagemenu.classList.add("hidden");
   }
   if(window.shareFR){
-    scoresFR = "J'ai joué à Word Games en français!\r\n";
-    if(wordlewin) scoresFR += "Wordle: " + wordlewin + " essais\r\n";
-    if(motigmawin) scoresFR += "Motigma: " + motigmawin + " essais\r\n";
-    if(spellingbeewordsfound.length) scoresFR += "Spelling Bee: " + spellingbeewordsfound.length + "/" + spellingbeesolutions.length + " mots\r\n";
-    if(bogglewordsfound.length) scoresFR += "Boggle: " + bogglewordsfound.length + "/" + bogglewords.length + " mots\r\n";
-    if(maxiwordtodayscore) scoresFR += "Maxiword: " + maxiwordtodayscore + "/" + maxiwordtodaybestscore + " points\r\n";
+    scoresFR = "J'ai joué à Word Games en français!<br>";
+    if(wordlewin) scoresFR += "Wordle: " + wordlewin + " essais<br>";
+    if(motigmawin) scoresFR += "Motigma: " + motigmawin + " essais<br>";
+    if(spellingbeewordsfound.length) scoresFR += "Spelling Bee: " + spellingbeewordsfound.length + "/" + spellingbeesolutions.length + " mots<br>";
+    if(bogglewordsfound.length) scoresFR += "Boggle: " + bogglewordsfound.length + "/" + bogglewords.length + " mots<br>";
+    if(maxiwordtodayscore) scoresFR += "Maxiword: " + maxiwordtodayscore + "/" + maxiwordtodaybestscore + " points<br>";
     if(substrwordsfound.length) scoresFR += "Substring: " + substrwordsfound.length + "/" + substrsolutions.length + " points";
-    prompt("Score", scoresFR);
+    pagescore.classList.remove("hidden");
+    pagescoretxt.innerHTML = scoresFR;
+    pagemenu.classList.add("hidden");
   }
+}
+
+scorecopy.onclick = () => {
+  navigator.clipboard.writeText(pagescoretxt.innerHTML.replaceAll("<br>","\r\n"));
+}
+
+scorewhatsapp.onclick = () => {
+  window.open("whatsapp://send?text="+(pagescoretxt.innerHTML.replaceAll("<br>", "%0A")));
 }
 
 </script>
@@ -840,14 +860,14 @@ share = () => {
   0% { filter: hue-rotate(0deg); }
   100% { filter: hue-rotate(360deg); }
 }
-html { min-height: 100vh; background: #fff; }
-body { width: 100%; max-width: 490px; margin: auto; padding: 0 0 30px; min-height: 100vh; font: 20px calibri, arial, sans-serif; position: relative; }
+html { min-height: 100dvh; background: #fff; }
+body { width: 100%; max-width: 490px; margin: auto; padding: 0 0 30px; min-height: 100dvh; font: 20px calibri, arial, sans-serif; position: relative; }
 body:before {
   content: "";
   width: 100%;
   max-width: 490px;
   display: block;
-  min-height: 100vh;
+  min-height: 100dvh;
   margin: auto;
   background: linear-gradient(#def, #fff);
   animation: hue 120s infinite;
@@ -889,4 +909,5 @@ button { cursor: pointer }
 #maxicolumns { columns: 2 }
 td { padding: 10px }
 a { display: inline-block; padding: 5px; background: #eee; border: 2px solid; width: auto; color: #000; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); text-decoration: none; text-align: center; font-size: 20px; font-weight: bold; cursor: pointer; }
+#pagescore { padding: 20px; font-size: 22px; font-weight: bold; text-align: center; }
 </style>
