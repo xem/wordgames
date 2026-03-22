@@ -991,6 +991,7 @@ share = () => {
     if(spellingbeewordsfound.length) scoresFR += "Spelling Bee: " + spellingbeewordsfound.length + "/" + spellingbeesolutions.length + " mots<br>";
     if(bogglewordsfound.length) scoresFR += "Boggle: " + bogglewordsfound.length + "/" + bogglewords.length + " mots<br>";
     if(maxiwordtodayscore) scoresFR += "Maxiword: " + maxiwordtodayscore + "/" + maxiwordtodaybestscore + " points<br>";
+    if(maxiword7todayscore) scoresFR += "Maxiword 7x7: " + maxiword7todayscore + "/" + maxiword7todaybestscore + " points<br>";
     if(substrwordsfound.length) scoresFR += "Substring: " + substrwordsfound.length + "/" + substrsolutions.length + " points";
     pagescore.classList.remove("hidden");
     pagescoretxt.innerHTML = scoresFR;
