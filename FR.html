@@ -824,9 +824,10 @@ maxiwordok.onclick = () => {
     value = input.value.trim();
     if(value && isSubset(value, maxiwordtodaystrings[i]) && words.includes(value)){
       maxiwordtodayscore += value.length;
+      localStorage[currentday+"_maxiwordlatest"+i] = value;
     }
     else {
-      input.value = "";
+      input.value = localStorage[currentday+"_maxiwordlatest"+i] || "";
     }
   }
   maxiwordscore.innerHTML = maxiwordtodayscore;
@@ -896,11 +897,11 @@ maxiword7ok.onclick = () => {
     input = window["maxiword7input" + i];
     value = input.value.trim();
     if(value && isSubset(value, maxiword7todaystrings[i]) && words.includes(value)){
-      localStorage[currentday+"_maxiwordlatest"+i] = value;
+      localStorage[currentday+"_maxiword7latest"+i] = value;
       maxiword7todayscore += value.length;
     }
     else {
-      input.value = localStorage[currentday+"_maxiwordlatest"+i] || "";
+      input.value = localStorage[currentday+"_maxiword7latest"+i] || "";
     }
   }
   maxiword7score.innerHTML = maxiword7todayscore;
