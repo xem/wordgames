@@ -828,6 +828,7 @@ maxiwordok.onclick = () => {
     }
     else {
       input.value = localStorage[currentday+"_maxiwordlatest"+i] || "";
+      maxiwordtodayscore += input.value.length;
     }
   }
   maxiwordscore.innerHTML = maxiwordtodayscore;
@@ -902,6 +903,7 @@ maxiword7ok.onclick = () => {
     }
     else {
       input.value = localStorage[currentday+"_maxiword7latest"+i] || "";
+      maxiword7todayscore += input.value.length;
     }
   }
   maxiword7score.innerHTML = maxiword7todayscore;
